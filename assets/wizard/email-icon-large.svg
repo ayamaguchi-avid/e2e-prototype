@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Outlined/24px/Communication/email" clip-path="url(#clip0_0_10)">
+<g id="Vector">
+</g>
+<path id="Vector_2" d="M55 15C55 12.25 52.75 10 50 10H10C7.25 10 5 12.25 5 15V45C5 47.75 7.25 50 10 50H50C52.75 50 55 47.75 55 45V15ZM50 15L30 27.5L10 15H50ZM50 45H10V20L30 32.5L50 20V45Z" fill="#2F3941"/>
+</g>
+<defs>
+<clipPath id="clip0_0_10">
+<rect width="60" height="60" fill="white"/>
+</clipPath>
+</defs>
+</svg>

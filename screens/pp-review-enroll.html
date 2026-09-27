@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Review and Enroll - Priority Payments - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .pp-heading { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .pp-tag-row { display: flex; gap: 32px; margin-bottom: 24px; justify-content: space-between; align-items: flex-start; }
+  .pp-tag-row .pp-tags-left { display: flex; gap: 32px; flex-wrap: wrap; }
+  .pp-tag-row .pp-tag-group { display: flex; flex-direction: column; gap: 6px; }
+  .pp-context-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; color: var(--color-text-placeholder); margin: 0; }
+  .pp-provider-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-surface-secondary); border: 1px solid var(--border-light); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--color-text-default); width: fit-content; }
+
+  .review-card { border: 1px solid var(--border-light); border-radius: 6px; padding: 20px; margin-bottom: 24px; }
+  .review-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+  .review-grid .field-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; color: var(--color-text-placeholder); margin: 0 0 6px; }
+  .review-grid .field-value { font-size: 14px; margin: 0; }
+  .review-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px; padding-top: 16px; border-top: 1px solid var(--border-light); }
+  .payment-memo-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; color: var(--color-text-placeholder); margin: 16px 0 6px; padding-top: 16px; border-top: 1px solid var(--border-light); }
+  .payment-memo-box { width: 100%; min-height: 60px; border: 1px solid var(--border-default); border-radius: 4px; padding: 10px; font-family: inherit; font-size: 14px; font-style: italic; color: var(--color-text-placeholder); resize: vertical; }
+  .apply-memo-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; }
+
+  .enroll-table { width: 100%; border-collapse: collapse; }
+  .enroll-table th, .enroll-table td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--border-default); font-size: 14px; height: 48px; }
+  .enroll-table th { background: var(--bg-surface-secondary); font-weight: 600; font-size: 15px; }
+  .enroll-table td.checkbox-cell, .enroll-table th.checkbox-cell { width: 40px; }
+  .enroll-table td.menu-cell, .enroll-table th.menu-cell { width: 32px; text-align: center; color: var(--color-text-placeholder); }
+  .enroll-table input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--color-primary-b60); }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <a href="../screens/home-connected.html">Priority Payments</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Set Up Payments</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done">
+          <span class="dot">1</span>
+          <span class="step-label">Select Vendor account<span class="step-status">Success</span></span>
+        </li>
+        <li class="done">
+          <span class="dot">2</span>
+          <span class="step-label">Confirm Address<span class="step-status">Success</span></span>
+        </li>
+        <li class="done">
+          <span class="dot">3</span>
+          <span class="step-label">Select Funding Account<span class="step-status">Success</span></span>
+        </li>
+        <li class="done">
+          <span class="dot">4</span>
+          <span class="step-label">Set Priority Payment Rules<span class="step-status">Success</span></span>
+        </li>
+        <li class="current">
+          <span class="dot">5</span>
+          <span class="step-label">Review and Enroll<span class="step-status">In progress</span></span>
+        </li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1 class="pp-heading">Review and Enroll</h1>
+
+        <div class="wizard-body">
+          <div class="review-card">
+            <div class="pp-tag-row">
+              <div class="pp-tags-left">
+                <div class="pp-tag-group">
+                  <p class="pp-context-label">BILL PROVIDER:</p>
+                  <div class="pp-provider-pill">Comcast Internet</div>
+                </div>
+                <div class="pp-tag-group">
+                  <p class="pp-context-label">ACCOUNT INFORMATION:</p>
+                  <div class="pp-provider-pill">HR1-332 / Harmony Building</div>
+                </div>
+              </div>
+              <a href="pp-payment-rules.html" class="btn-tertiary">Edit Enrollment</a>
+            </div>
+
+            <div class="review-grid">
+              <div>
+                <p class="field-label">REMITTANCE ADDRESS</p>
+                <p class="field-value">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
+              </div>
+              <div>
+                <p class="field-label">PHYSICAL ADDRESS</p>
+                <p class="field-value">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
+              </div>
+              <div>
+                <p class="field-label">FUNDING ACCOUNT</p>
+                <p class="field-value">CIT Bank &bull;&bull;&bull;&bull;4145</p>
+              </div>
+            </div>
+
+            <div class="review-grid-2">
+              <div>
+                <p class="field-label">AUTO-INITIATION</p>
+                <span class="pill pill-success">Enabled</span>
+              </div>
+              <div>
+                <p class="field-label">APPROVAL WORKFLOW</p>
+                <span class="pill pill-muted">Time Sensitive Auto Payments</span>
+              </div>
+            </div>
+
+            <p class="payment-memo-label">PAYMENT MEMO</p>
+            <textarea class="payment-memo-box" placeholder="Placeholder text"></textarea>
+            <label class="apply-memo-row">
+              <input type="checkbox" id="apply-memo-all" />
+              Apply memo to all accounts
+            </label>
+          </div>
+
+          <p style="font-weight:600; margin-bottom:8px;">The following accounts will be enrolled:</p>
+          <table class="enroll-table">
+            <thead>
+              <tr>
+                <th class="checkbox-cell"></th>
+                <th>Entity</th>
+                <th>Account Number</th>
+                <th>Vendor Account Number</th>
+                <th>Payment Memo</th>
+                <th class="menu-cell"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" checked /></td>
+                <td>Harmony Building</td>
+                <td>2391031032</td>
+                <td>HR1-332</td>
+                <td><a href="#" class="btn-tertiary">Add Memo</a></td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" checked /></td>
+                <td>Willow Haven</td>
+                <td>89283918</td>
+                <td>HB22-33</td>
+                <td>Common Area Utilities</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" checked /></td>
+                <td>The Haven</td>
+                <td>89283918</td>
+                <td>HB22-33</td>
+                <td>A confirmation will be provided once&hellip;</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" checked /></td>
+                <td>Juniper</td>
+                <td>89283918</td>
+                <td>HB22-33</td>
+                <td>Label</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" checked /></td>
+                <td>The Camden</td>
+                <td>89283918</td>
+                <td>HB22-33</td>
+                <td><a href="#" class="btn-tertiary">Add Memo</a></td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <div style="display:flex; gap:12px;">
+            <a href="pp-payment-rules.html" class="btn btn-secondary">Back</a>
+            <button type="button" id="open-enroll-modal" class="btn btn-primary">Enroll</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: enroll confirmation -->
+<div class="modal-overlay" id="enroll-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Enroll 5 account(s)</h3>
+      <button type="button" class="modal-close" id="enroll-modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      Please disable auto pay for the selected accounts in your bill provider's portal. This helps prevent duplicate invoices and fees.
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="enroll-modal-cancel">Cancel</button>
+      <a href="../screens/home-connected.html" class="btn btn-primary">Enroll</a>
+    </div>
+  </div>
+</div>
+
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  var modalOverlay = document.getElementById('enroll-modal-overlay');
+  document.getElementById('open-enroll-modal').addEventListener('click', function () {
+    modalOverlay.classList.add('open');
+  });
+  document.getElementById('enroll-modal-close').addEventListener('click', function () {
+    modalOverlay.classList.remove('open');
+  });
+  document.getElementById('enroll-modal-cancel').addEventListener('click', function () {
+    modalOverlay.classList.remove('open');
+  });
+  modalOverlay.addEventListener('click', function (e) {
+    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+  });
+
+  // "Apply memo to all accounts" mirrors the memo textarea into every row's memo cell.
+  document.getElementById('apply-memo-all').addEventListener('change', function (e) {
+    if (!e.target.checked) return;
+    var memo = document.querySelector('.payment-memo-box').value || 'Placeholder text';
+    document.querySelectorAll('.enroll-table tbody tr').forEach(function (row) {
+      var memoCell = row.children[4];
+      memoCell.textContent = memo;
+    });
+  });
+</script>
+</body>
+</html>

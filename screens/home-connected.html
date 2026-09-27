@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Connected Bill Retrieval - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .pp-heading { font-size: 28px; font-weight: 500; margin: 0 0 4px; color: var(--color-text-default); }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="#">Add - on Management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connected Bill Retrieval</span>
+    </div>
+
+    <div class="tabs">
+      <a href="#" id="tab-cbr" class="tab active" onclick="showTab('cbr'); return false;">Connected bill retrieval</a>
+      <a href="#" id="tab-pp" class="tab" onclick="showTab('pp'); return false;">Priority Payments</a>
+    </div>
+
+    <!-- ===================== Tab 1: Connected Bill Retrieval ===================== -->
+    <div id="panel-cbr" class="tab-panel active">
+      <div class="card manage-card">
+        <div class="manage-nav">
+          <h2>Manage</h2>
+          <a href="home-connected.html" class="nav-item active">Providers</a>
+          <a href="home-validated-credentials.html" class="nav-item">Validated credentials</a>
+          <a href="home-credentials-pending.html" class="nav-item">Credentials pending</a>
+          <a href="#" onclick="showTab('pp'); return false;" class="nav-item">Priority Payments</a>
+          <span class="nav-item">Errors</span>
+          <span class="nav-item">Notifications</span>
+          <span class="nav-item">Requested Providers</span>
+        </div>
+        <div class="manage-content">
+          <p class="panel-title">Connected Providers</p>
+          <p class="panel-subtitle text-muted">List of connected bill providers.</p>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div class="search-input-wrap" style="width:270px;">
+              <img src="../assets/icons/search.svg" alt="" />
+              <input type="search" placeholder="Search bill provider" />
+            </div>
+            <a class="btn btn-primary" href="../screens/wizard-search-provider.html">Connect provider</a>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr><th>Bill provider</th><th>URL</th><th>Connected Bill Retrieval accts</th><th>Priority Payments</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="#">Charlotte Water</a></td>
+                <td>https://www.charlotte.water.com/</td>
+                <td>20</td>
+                <td><span class="pill pill-success">ENROLLED</span></td>
+              </tr>
+              <tr>
+                <td><a href="#">Duke Energy</a></td>
+                <td>https://www.duke-energy.com/</td>
+                <td>5</td>
+                <td><span class="pill pill-success">ENROLLED</span></td>
+              </tr>
+              <tr>
+                <td><a href="#">Franklin County Water Authority</a></td>
+                <td>https://www.fcwa.org/</td>
+                <td>1</td>
+                <td><span class="pill pill-success">ENROLLED</span></td>
+              </tr>
+              <tr>
+                <td><a href="#">Comcast</a></td>
+                <td>https://www.comcast.com</td>
+                <td>10</td>
+                <td><a href="#" onclick="showTab('pp'); return false;">Set Up</a></td>
+              </tr>
+              <tr>
+                <td><a href="#">PSE&amp;G</a></td>
+                <td>https://www.pseg.com/</td>
+                <td>27</td>
+                <td><a href="#" onclick="showTab('pp'); return false;">Set Up</a></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="mt-24 text-muted" style="font-size:12px;">
+            Reference variants of this screen:
+            <a href="home-connected-alt.html">v2 (with "Coming soon" badge on Requested Providers)</a> ·
+            <a href="home-connected-v3.html">v3</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== Tab 2: Priority Payments (Time Sensitive Payments) ===================== -->
+    <div id="panel-pp" class="tab-panel">
+      <p class="pp-heading">Time Sensitive Payments</p>
+      <div class="card manage-card">
+        <div class="manage-nav">
+          <h2>Manage</h2>
+          <a href="#" class="nav-item active">Providers</a>
+          <span class="nav-item">Automated Approvals</span>
+          <span class="nav-item">Errors</span>
+          <span class="nav-item">Notifications</span>
+        </div>
+        <div class="manage-content">
+          <p class="panel-title">Connected Providers</p>
+          <p class="panel-subtitle text-muted">List of connected bill providers.</p>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:8px;">
+            <div class="search-input-wrap" style="width:270px;">
+              <img src="../assets/icons/search.svg" alt="" />
+              <input type="search" placeholder="Search bill provider" />
+            </div>
+            <button type="button" class="btn btn-secondary">Filter</button>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr><th>Bill provider</th><th>URL</th><th>Connected Bill Retrieval accts</th><th>Priority Payments</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="#">Charlotte Water</a></td>
+                <td>https://www.charlotte.water.com/</td>
+                <td>20</td>
+                <td><span class="pill pill-success">AUTO APPROVE</span> <span class="pill pill-success">AUTO INITIATE</span></td>
+              </tr>
+              <tr>
+                <td><a href="#">Duke Energy</a></td>
+                <td>https://www.duke-energy.com/</td>
+                <td>5</td>
+                <td><span class="pill pill-success">AUTO APPROVE</span> <span class="pill pill-muted">AUTO INITIATE</span></td>
+              </tr>
+              <tr>
+                <td><a href="#">Franklin County Water Authority</a></td>
+                <td>https://www.fcwa.org/</td>
+                <td>1</td>
+                <td><span class="pill pill-muted">AUTO APPROVE</span> <span class="pill pill-success">AUTO INITIATE</span></td>
+              </tr>
+              <tr>
+                <td><a href="#">Comcast</a></td>
+                <td>https://www.comcast.com</td>
+                <td>10</td>
+                <td><a href="../screens/pp-select-vendor.html">Set Up</a></td>
+              </tr>
+              <tr>
+                <td><a href="#">PSE&amp;G</a></td>
+                <td>https://www.pseg.com/</td>
+                <td>27</td>
+                <td><a href="../screens/pp-select-vendor.html">Set Up</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tabs .tab').forEach(function (t) { t.classList.remove('active'); });
+    document.getElementById('panel-' + name).classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+</script>
+</body>
+</html>

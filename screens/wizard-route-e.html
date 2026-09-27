@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Connect to PSE&amp;G - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .stage-frame { background:#0A2E57; border:1px solid #122B6A; border-radius:4px; padding:24px; display:flex; align-items:center; justify-content:center; min-height:500px; }
+  .stage-card-sm { background:#fff; border:1px solid #E0E1E1; border-radius:4px; padding:16px; display:flex; flex-direction:column; gap:16px; width:408px; max-width:100%; }
+  .stage-card-sm h2 { font-size:16px; font-weight:500; margin:0; text-align:center; }
+  .field-disabled input { background:#fff; border-color:var(--border-light); color:var(--color-text-placeholder); }
+  .field .pw-wrap { position:relative; }
+  .field .pw-wrap img { position:absolute; right:8px; top:50%; transform:translateY(-50%); width:20px; height:20px; opacity:.65; cursor:pointer; }
+  .field .optional-tt { display:inline-flex; align-items:center; gap:4px; }
+  .field .optional-tt .tt-icon { width:14px; height:14px; }
+  .btn-submit { width:100%; background:#fff; border:1px solid var(--border-default); color:var(--color-link); font-weight:600; }
+  .btn-submit:hover { background:#F4F5F6; }
+
+  .connecting-box { background: #0A2E57; border: 1px solid #122B6A; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 48px 24px; flex: 1; min-height: 380px; }
+  .connecting-provider { color: #fff; font-size: 16px; font-weight: 500; margin: 0; text-align: center; }
+  .connecting-caption { color: #fff; font-size: 12px; margin: 0; text-align: center; }
+  .spinner { width: 96px; height: 96px; border-radius: 50%; border: 6px solid rgba(255,255,255,.25); border-top-color: #fff; animation: wizard-spin 1s linear infinite; }
+  @keyframes wizard-spin { to { transform: rotate(360deg); } }
+
+  .account-card { border: 1px solid #E0E1E1; border-radius: 4px; padding: 8px 16px; margin-bottom: 8px; }
+  .account-email { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+  .account-status { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #F58312; margin: 0; }
+  .account-status img { width: 12px; height: 12px; }
+  .add-login-row { display: flex; align-items: center; gap: 8px; height: 40px; padding: 8px; font-size: 14px; color: var(--color-text-default); }
+  .add-login-row img { width: 22px; height: 16px; }
+  .accounts-label { font-size: 14px; font-weight: 600; margin: 0 0 8px; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done"><span class="dot"></span><span class="step-label">Bill providers<span class="step-status">Success</span></span></li>
+        <li class="current"><span class="dot">2</span><span class="step-label">Connect to bill provider<span class="step-status">In progress</span></span></li>
+        <li><span class="dot">3</span><span class="step-label">Master vendor</span></li>
+        <li><span class="dot">4</span><span class="step-label">Enroll accounts</span></li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Connect to PSE&amp;G</h1>
+        <p class="wizard-intro" id="wizard-intro-text">Enter your username and password for PSE&amp;G to connect and find your accounts.</p>
+
+        <div class="wizard-body">
+
+          <!-- Stage e1: step 86E - empty login form -->
+          <div class="stage active" id="stage-e1">
+            <div class="stage-frame">
+              <div class="stage-card-sm">
+                <h2>PSE&amp;G</h2>
+                <div class="field field-disabled" style="margin-bottom:0;">
+                  <label>Login URL</label>
+                  <input type="text" readonly value="https://nj.myaccount.pseg.com/user/login" />
+                </div>
+                <div class="field" style="margin-bottom:0;">
+                  <label>Username</label>
+                  <input type="text" id="e-username" placeholder="Enter username" />
+                </div>
+                <div class="field" style="margin-bottom:0;">
+                  <label>Password</label>
+                  <div class="pw-wrap">
+                    <input type="password" id="e-password" placeholder="Enter password" />
+                    <img src="../assets/wizard/icon-eye.svg" alt="Show password" />
+                  </div>
+                </div>
+                <div class="field" style="margin-bottom:0;">
+                  <label>Account nickname <span class="optional">(optional)</span>
+                    <span class="tt optional-tt" tabindex="0">
+                      <img class="tt-icon" src="../assets/wizard/icon-info.svg" alt="" />
+                      <span class="tt-bubble">Give this connection a friendly name to help you identify it later.</span>
+                    </span>
+                  </label>
+                  <input type="text" placeholder="Enter nickname" />
+                </div>
+                <button type="button" class="btn btn-submit" onclick="fillDemoAndAdvance(); return false;">Submit</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage e2: step 87E - filled login form -->
+          <div class="stage" id="stage-e2">
+            <div class="stage-frame">
+              <div class="stage-card-sm">
+                <h2>PSE&amp;G</h2>
+                <div class="field field-disabled" style="margin-bottom:0;">
+                  <label>Login URL</label>
+                  <input type="text" readonly value="https://nj.myaccount.pseg.com/user/login" />
+                </div>
+                <div class="field" style="margin-bottom:0;">
+                  <label>Username</label>
+                  <input type="text" value="agrater@nextrealty.com" readonly />
+                </div>
+                <div class="field" style="margin-bottom:0;">
+                  <label>Password</label>
+                  <div class="pw-wrap">
+                    <input type="password" value="supersecretpassword" readonly />
+                    <img src="../assets/wizard/icon-eye.svg" alt="Show password" />
+                  </div>
+                </div>
+                <div class="field" style="margin-bottom:0;">
+                  <label>Account nickname <span class="optional">(optional)</span>
+                    <span class="tt optional-tt" tabindex="0">
+                      <img class="tt-icon" src="../assets/wizard/icon-info.svg" alt="" />
+                      <span class="tt-bubble">Give this connection a friendly name to help you identify it later.</span>
+                    </span>
+                  </label>
+                  <input type="text" placeholder="Enter nickname" />
+                </div>
+                <button type="button" class="btn btn-submit" onclick="showStage('e3'); return false;">Submit</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage e3: step 88E - submitting/loading -->
+          <div class="stage" id="stage-e3">
+            <div class="connecting-box">
+              <p class="connecting-provider">PSE&amp;G</p>
+              <div class="spinner" aria-hidden="true"></div>
+              <p class="connecting-caption">Submitting.....</p>
+            </div>
+          </div>
+
+          <!-- Stage e4: step 89E - pending status (LAST) -->
+          <div class="stage" id="stage-e4">
+            <p class="accounts-label">Accounts</p>
+            <div class="account-card">
+              <p class="account-email">agrater@nextrealty.com <span class="text-muted">(if there was an account nickname it would go here)</span></p>
+              <p class="account-status"><img src="../assets/wizard/pending-status-icon.svg" alt="" /><span>Account connection pending</span></p>
+            </div>
+            <div class="add-login-row">
+              <img src="../assets/wizard/add-login-icon.svg" alt="" />
+              <span>Add additional login</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary" id="btn-cancel">&larr; Cancel</a>
+          <div style="display:flex; gap:8px;">
+            <a href="wizard-route-c.html" class="btn btn-secondary" id="btn-back">Back</a>
+            <a href="#" id="btn-next" class="btn btn-primary" onclick="return handleNext();">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  var STAGE_CONFIG = {
+    e1: { next: { stage: 'e2' }, label: 'Next', cancelLabel: '← Cancel', backEnabled: true, intro: 'Enter your username and password for PSE&G to connect and find your accounts.' },
+    e2: { next: { stage: 'e3' }, label: 'Next', cancelLabel: '← Cancel', backEnabled: true, intro: 'Enter your username and password for PSE&G to connect and find your accounts.' },
+    e3: { next: { stage: 'e4' }, label: 'Next', disabled: true, cancelLabel: '← Cancel', backEnabled: true, intro: 'Enter your username and password for PSE&G to connect and find your accounts.' },
+    e4: { next: { href: 'wizard-route-d.html' }, label: 'Next', cancelLabel: '← Save & Exit', backEnabled: false, intro: 'Add more logins for <strong>PSE&G</strong> or click next. Connection to accounts can take up to 10min.' }
+  };
+
+  var autoAdvanceTimer = null;
+
+  function fillDemoAndAdvance() {
+    var u = document.getElementById('e-username');
+    var p = document.getElementById('e-password');
+    if (u) u.value = 'agrater@nextrealty.com';
+    if (p) p.value = 'supersecretpassword';
+    showStage('e2');
+  }
+
+  function showStage(id) {
+    document.querySelectorAll('.stage').forEach(function (el) { el.classList.remove('active'); });
+    document.getElementById('stage-' + id).classList.add('active');
+    var cfg = STAGE_CONFIG[id];
+
+    document.getElementById('wizard-intro-text').innerHTML = cfg.intro;
+
+    var nextBtn = document.getElementById('btn-next');
+    nextBtn.textContent = cfg.label;
+    nextBtn.dataset.stage = id;
+    if (cfg.disabled) { nextBtn.setAttribute('aria-disabled', 'true'); } else { nextBtn.removeAttribute('aria-disabled'); }
+
+    var cancelBtn = document.getElementById('btn-cancel');
+    cancelBtn.textContent = cfg.cancelLabel;
+
+    var backBtn = document.getElementById('btn-back');
+    if (cfg.backEnabled) {
+      backBtn.removeAttribute('aria-disabled');
+      backBtn.onclick = null;
+    } else {
+      backBtn.setAttribute('aria-disabled', 'true');
+      backBtn.onclick = function () { return false; };
+    }
+
+    if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
+    if (id === 'e3') {
+      autoAdvanceTimer = setTimeout(function () { showStage('e4'); }, 1400);
+    }
+  }
+
+  function handleNext() {
+    var id = document.getElementById('btn-next').dataset.stage || 'e1';
+    var cfg = STAGE_CONFIG[id];
+    if (cfg.disabled) return false;
+    if (cfg.next.href) {
+      window.location.href = cfg.next.href;
+    } else {
+      showStage(cfg.next.stage);
+    }
+    return false;
+  }
+
+  showStage('e1');
+</script>
+</body>
+</html>

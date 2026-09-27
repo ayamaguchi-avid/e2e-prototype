@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Priority Payment Rules - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .pp-heading { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .pp-subtext { font-size: 14px; color: var(--color-text-default); margin: 0 0 20px; }
+  .pp-tag-row { display: flex; gap: 32px; margin-bottom: 24px; flex-wrap: wrap; }
+  .pp-tag-row .pp-tag-group { display: flex; flex-direction: column; gap: 6px; }
+  .pp-context-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; color: var(--color-text-placeholder); margin: 0; }
+  .pp-provider-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-surface-secondary); border: 1px solid var(--border-light); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--color-text-default); width: fit-content; }
+  .pp-verified-pill { display: inline-flex; align-items: center; gap: 4px; border: 1px solid #B7E4C7; color: #1E6B3C; background: #E9F7EF; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px; width: fit-content; }
+
+  .rule-card { border: 1px solid var(--border-light); border-radius: 6px; padding: 20px; margin-bottom: 16px; }
+  .rule-card-head { display: flex; align-items: flex-start; gap: 12px; }
+  .rule-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface-secondary); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .rule-icon.on { background: #E9F7EF; color: #1E6B3C; }
+  .rule-title-row { flex: 1; display: flex; align-items: center; justify-content: space-between; }
+  .rule-title-row h3 { font-size: 15px; font-weight: 600; margin: 0; }
+  .rule-desc { font-size: 13px; color: var(--color-text-placeholder); margin: 8px 0 0 44px; }
+  .rule-workflow-select { margin: 16px 0 0 44px; max-width: 480px; }
+  .rule-workflow-select label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+  .rule-workflow-select .req { color: #C0392B; }
+  .workflow-banner { margin: 12px 0 0 44px; max-width: 640px; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 4px; font-size: 13px; }
+  .workflow-banner.warn { background: #FDF3DA; border: 1px solid #F0D48A; color: #6B4E00; }
+  .workflow-banner.good { background: #E9F7EF; border: 1px solid #B7E4C7; color: #1E6B3C; }
+  .workflow-banner .wb-close { margin-left: auto; background: none; border: none; cursor: pointer; color: inherit; }
+  .workflow-banner a { font-weight: 600; }
+  .hidden { display: none !important; }
+
+  .apply-all-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .apply-all-table th, .apply-all-table td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--border-default); font-size: 14px; height: 48px; }
+  .apply-all-table th { background: var(--bg-surface-secondary); font-weight: 600; font-size: 15px; }
+  .apply-all-table td.checkbox-cell, .apply-all-table th.checkbox-cell { width: 40px; }
+  .apply-all-table input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--color-primary-b60); }
+  .pp-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 12px; border-top: 1px solid var(--border-default); font-size: 13px; color: var(--color-text-placeholder); }
+  .pp-pagination button { background: none; border: 1px solid var(--border-default); border-radius: 4px; width: 28px; height: 28px; color: var(--color-text-default); }
+
+  /* Side sheet: workflow detail */
+  .wf-description-box { background: var(--bg-surface-secondary); border-radius: 4px; padding: 12px 14px; font-size: 13px; margin-top: 12px; }
+  .wf-description-box .wd-label { font-weight: 600; margin: 0 0 4px; color: var(--color-text-placeholder); font-size: 12px; }
+  .side-sheet-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <a href="../screens/home-connected.html">Priority Payments</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Set Up Payments</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done">
+          <span class="dot">1</span>
+          <span class="step-label">Select Vendor account<span class="step-status">Success</span></span>
+        </li>
+        <li class="done">
+          <span class="dot">2</span>
+          <span class="step-label">Confirm Address<span class="step-status">Success</span></span>
+        </li>
+        <li class="done">
+          <span class="dot">3</span>
+          <span class="step-label">Select Funding Account<span class="step-status">Success</span></span>
+        </li>
+        <li class="current">
+          <span class="dot">4</span>
+          <span class="step-label">Set Priority Payment Rules<span class="step-status">In progress</span></span>
+        </li>
+        <li>
+          <span class="dot">5</span>
+          <span class="step-label">Review and Enroll</span>
+        </li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1 class="pp-heading">Priority Payment Rules</h1>
+        <p class="pp-subtext">Set rules to prioritize payments based on your criteria.</p>
+
+        <div class="pp-tag-row">
+          <div class="pp-tag-group">
+            <p class="pp-context-label">BILL PROVIDER:</p>
+            <div class="pp-provider-pill">Comcast Internet</div>
+          </div>
+          <div class="pp-tag-group">
+            <p class="pp-context-label">VENDOR RECORD:</p>
+            <div class="pp-provider-pill">Comcast Internet South</div>
+          </div>
+          <div class="pp-tag-group">
+            <p class="pp-context-label">ACCOUNT INFORMATION:</p>
+            <div class="pp-provider-pill">HR1-332 / Harmony Building</div>
+          </div>
+          <div class="pp-tag-group">
+            <p class="pp-context-label">ADDRESS</p>
+            <div class="pp-verified-pill">Address Verified</div>
+          </div>
+        </div>
+
+        <div class="wizard-body">
+          <div class="rule-card">
+            <div class="rule-card-head">
+              <span class="rule-icon" id="auto-initiate-icon">&#8635;</span>
+              <div class="rule-title-row">
+                <h3>Auto Initiate payment</h3>
+                <label class="toggle">
+                  <input type="checkbox" id="auto-initiate-toggle" />
+                  <span class="track"></span>
+                </label>
+              </div>
+            </div>
+            <p class="rule-desc">When enabled, AutoCharge will initiate the payment automatically instead of requiring manual administrative trigger. This accelerates payment processing runs.</p>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-card-head">
+              <span class="rule-icon" id="approval-icon">&#10003;</span>
+              <div class="rule-title-row">
+                <h3>Approval Workflow</h3>
+                <label class="toggle">
+                  <input type="checkbox" id="approval-toggle" />
+                  <span class="track"></span>
+                </label>
+              </div>
+            </div>
+            <p class="rule-desc">Select one approval workflow to be applied specifically to this account. This configuration overrides any globally applied default workflow.</p>
+
+            <div id="workflow-banner" class="workflow-banner hidden">
+              <span id="wb-icon">&#9888;</span>
+              <span id="wb-text"></span>
+              <button type="button" class="wb-close" id="wb-close">&times;</button>
+            </div>
+
+            <div id="workflow-select-wrap" class="rule-workflow-select hidden">
+              <label><span class="req">*</span> Choose an approval workflow</label>
+              <select id="workflow-select">
+                <option value="">Select one</option>
+                <option value="High Risk Payments">High Risk Payments</option>
+                <option value="Controlled Payments">Controlled Payments</option>
+                <option value="Subscription Bill">Subscription Bill</option>
+                <option value="Auto Approval">Auto Approval (Recommended)</option>
+                <option value="Construction Bills">Construction Bills</option>
+                <option value="Influencers">Influencers</option>
+              </select>
+            </div>
+          </div>
+
+          <p style="font-weight:600; margin-bottom:8px;">Apply to all Vendor Accounts registered to this Vendor: (optional)</p>
+          <table class="apply-all-table">
+            <thead>
+              <tr>
+                <th class="checkbox-cell"></th>
+                <th>Entity</th>
+                <th>Account Number</th>
+                <th>Vendor Account Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Harmony Homes</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Willow Haven</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Haven</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Juniper</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Camden</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Hawthorne</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Grandview</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Elora</td><td>89283918</td><td>HB22-33</td></tr>
+            </tbody>
+          </table>
+          <div class="pp-pagination">
+            <button type="button" aria-label="Previous page">&#8249;</button>
+            <span>1-8 of 100</span>
+            <button type="button" aria-label="Next page">&#8250;</button>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <div style="display:flex; gap:12px;">
+            <a href="pp-select-funding.html" class="btn btn-secondary">Back</a>
+            <a href="pp-review-enroll.html" class="btn btn-primary">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Side sheet: Priority Payment Workflow detail -->
+<div class="side-sheet-overlay" id="workflow-sheet-overlay">
+  <div class="side-sheet">
+    <div class="side-sheet-header">
+      <h3>Priority Payment Workflow</h3>
+      <button type="button" class="side-sheet-close" id="wf-sheet-close">&times;</button>
+    </div>
+
+    <div id="sheet-banner" class="workflow-banner" style="margin-left:0;">
+      <span id="sheet-wb-icon">&#9888;</span>
+      <span id="sheet-wb-text"></span>
+    </div>
+
+    <div class="rule-workflow-select" style="margin-left:0; margin-top:16px;">
+      <label><span class="req">*</span> Approval Workflow</label>
+      <select id="sheet-workflow-select">
+        <option value="High Risk Payments">High Risk Payments</option>
+        <option value="Controlled Payments">Controlled Payments</option>
+        <option value="Subscription Bill">Subscription Bill</option>
+        <option value="Auto Approval">Auto Approval (Recommended)</option>
+        <option value="Construction Bills">Construction Bills</option>
+        <option value="Influencers">Influencers</option>
+      </select>
+    </div>
+
+    <div class="wf-description-box">
+      <p class="wd-label">Workflow Description:</p>
+      <p id="sheet-wf-description" style="margin:0; white-space:pre-line;"></p>
+    </div>
+
+    <div class="side-sheet-footer">
+      <button type="button" class="btn btn-secondary" id="wf-sheet-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="wf-sheet-apply">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  var WORKFLOWS = {
+    'High Risk Payments': { approvals: 5, stages: 3, days: 3 },
+    'Controlled Payments': { approvals: 3, stages: 2, days: 2 },
+    'Subscription Bill': { approvals: 2, stages: 1, days: 1 },
+    'Auto Approval': null, // special-cased: no approvers
+    'Construction Bills': { approvals: 4, stages: 3, days: 4 },
+    'Influencers': { approvals: 2, stages: 2, days: 2 }
+  };
+
+  function describe(value) {
+    if (!value) return '';
+    if (value === 'Auto Approval') {
+      return "This workflow has no approvers and no approval steps — bills are approved automatically to avoid late payments. No one will review them before they're paid.";
+    }
+    var w = WORKFLOWS[value];
+    return 'Approvals: ' + w.approvals + '\nStages: ' + w.stages + '\nEstimated time of approval: ' + w.days + ' day' + (w.days === 1 ? '' : 's');
+  }
+
+  function bannerHtmlFor(value) {
+    if (value === 'Auto Approval') {
+      return {
+        cls: 'good',
+        icon: '&#10003;',
+        text: 'This workflow helps streamline invoice approvals, save time, and keep bills on track for on-time payment.'
+      };
+    }
+    return {
+      cls: 'warn',
+      icon: '&#9888;',
+      text: 'This invoice workflow approval is more complex than recommended. We recommend the <strong>Auto Approval</strong> workflow.'
+    };
+  }
+
+  // ---- Auto Initiate toggle ----
+  var autoInitiateToggle = document.getElementById('auto-initiate-toggle');
+  var autoInitiateIcon = document.getElementById('auto-initiate-icon');
+  autoInitiateToggle.addEventListener('change', function () {
+    autoInitiateIcon.classList.toggle('on', autoInitiateToggle.checked);
+  });
+
+  // ---- Approval Workflow toggle ----
+  var approvalToggle = document.getElementById('approval-toggle');
+  var approvalIcon = document.getElementById('approval-icon');
+  var workflowSelectWrap = document.getElementById('workflow-select-wrap');
+  var workflowSelect = document.getElementById('workflow-select');
+  var workflowBanner = document.getElementById('workflow-banner');
+  var wbText = document.getElementById('wb-text');
+  var wbIcon = document.getElementById('wb-icon');
+
+  approvalToggle.addEventListener('change', function () {
+    approvalIcon.classList.toggle('on', approvalToggle.checked);
+    workflowSelectWrap.classList.toggle('hidden', !approvalToggle.checked);
+    if (!approvalToggle.checked) {
+      workflowBanner.classList.add('hidden');
+    } else if (workflowSelect.value) {
+      updateBanner(workflowSelect.value);
+    }
+  });
+
+  function updateBanner(value) {
+    if (!value) { workflowBanner.classList.add('hidden'); return; }
+    var b = bannerHtmlFor(value);
+    workflowBanner.classList.remove('hidden', 'warn', 'good');
+    workflowBanner.classList.add(b.cls);
+    wbIcon.innerHTML = b.icon;
+    wbText.innerHTML = b.text + ' &nbsp;<a href="#" id="see-workflow-link">See workflow</a>';
+    document.getElementById('see-workflow-link').addEventListener('click', function (e) {
+      e.preventDefault();
+      openWorkflowSheet(workflowSelect.value);
+    });
+  }
+
+  workflowSelect.addEventListener('change', function () {
+    updateBanner(workflowSelect.value);
+  });
+
+  document.getElementById('wb-close').addEventListener('click', function () {
+    workflowBanner.classList.add('hidden');
+  });
+
+  // ---- Side sheet ----
+  var overlay = document.getElementById('workflow-sheet-overlay');
+  var sheetSelect = document.getElementById('sheet-workflow-select');
+  var sheetDesc = document.getElementById('sheet-wf-description');
+  var sheetBanner = document.getElementById('sheet-banner');
+  var sheetWbText = document.getElementById('sheet-wb-text');
+  var sheetWbIcon = document.getElementById('sheet-wb-icon');
+
+  function updateSheetContent(value) {
+    sheetSelect.value = value;
+    sheetDesc.textContent = describe(value);
+    var b = bannerHtmlFor(value);
+    sheetBanner.classList.remove('warn', 'good');
+    sheetBanner.classList.add(b.cls);
+    sheetWbIcon.innerHTML = b.icon;
+    sheetWbText.innerHTML = b.text;
+  }
+
+  function openWorkflowSheet(value) {
+    updateSheetContent(value || 'Auto Approval');
+    overlay.classList.add('open');
+  }
+
+  sheetSelect.addEventListener('change', function () {
+    updateSheetContent(sheetSelect.value);
+  });
+
+  document.getElementById('wf-sheet-close').addEventListener('click', closeSheet);
+  document.getElementById('wf-sheet-cancel').addEventListener('click', closeSheet);
+  document.getElementById('wf-sheet-apply').addEventListener('click', function () {
+    workflowSelect.value = sheetSelect.value;
+    updateBanner(sheetSelect.value);
+    closeSheet();
+  });
+  function closeSheet() { overlay.classList.remove('open'); }
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeSheet(); });
+</script>
+</body>
+</html>

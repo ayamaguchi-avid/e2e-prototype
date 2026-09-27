@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Invoice Detail - AvidInvoice</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  /* Scoped to this "Invoice and pay" flow only — extends shared.css tokens,
+     never edits it. */
+  .id-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+  .id-title { display:flex; align-items:center; gap:12px; }
+  .id-title h1 { font-size:20px; font-weight:600; margin:0; display:flex; align-items:center; gap:8px; }
+  .id-title .bookmark { width:18px; height:18px; color:var(--color-primary-b60); }
+  .pill-purple { display:inline-block; font-size:11px; font-weight:600; padding:2px 10px; border-radius:10px; border:1px solid #a855c7; color:#8A2BA8; }
+
+  .id-actions { display:flex; align-items:center; gap:10px; }
+  .id-actions .view-label { font-size:11px; color:var(--color-text-placeholder); font-weight:600; margin-right:4px; }
+  .id-seg { display:flex; border:1px solid var(--border-default); border-radius:4px; overflow:hidden; }
+  .id-seg button { border:none; background:#fff; padding:6px 12px; font-size:12px; font-weight:600; color:var(--color-text-default); }
+  .id-seg button.active { background:var(--bg-surface-secondary); }
+  .id-actions .btn { height:32px; font-size:12px; padding:0 12px; }
+
+  .alert-warning, .alert-success-box {
+    display:flex; align-items:flex-start; gap:10px; padding:12px 16px; border-radius:4px;
+    margin-bottom:16px; position:relative;
+  }
+  .alert-warning { background:#FFFAE6; border:1px solid #F58312; }
+  .alert-success-box { background:#E9F7EF; border:1px solid #43A047; }
+  .alert-warning .a-icon { color:#F58312; }
+  .alert-success-box .a-icon { color:#1E8E3E; }
+  .alert-warning .a-icon, .alert-success-box .a-icon { width:20px; height:20px; flex-shrink:0; }
+  .a-title { font-weight:600; font-size:14px; margin:0 0 2px; }
+  .a-body { font-size:14px; margin:0; color:var(--color-text-default); }
+  .a-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#8D9AA3; font-size:14px; }
+
+  .id-panels { display:flex; gap:16px; align-items:flex-start; margin-bottom:16px; }
+  .id-left-panel { width:460px; min-width:460px; background:#fff; border:1px solid var(--border-light); border-radius:4px; padding:20px; }
+  .id-left-panel h2 { font-size:16px; font-weight:600; margin:0 0 16px; }
+
+  .id-field-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; font-size:13px; }
+  .id-field-row .id-label { width:150px; min-width:150px; color:var(--color-text-placeholder); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.02em; }
+  .id-field-row .id-value { flex:1; border:1px solid var(--border-default); border-radius:4px; padding:6px 10px; background:#fff; }
+  .id-field-row .id-value.plain { border-color:transparent; background:none; padding:6px 0; font-weight:600; }
+  .id-field-row .id-value.addr { line-height:1.4; }
+  .id-field-row .id-value select { width:100%; border:none; font-family:inherit; font-size:13px; }
+
+  .id-auto-row { display:flex; align-items:center; gap:10px; margin:18px 0 4px; padding-top:14px; border-top:1px dashed var(--border-light); }
+  .id-auto-row .label { font-size:13px; font-weight:600; flex:1; }
+  .id-auto-row .info-btn { background:none; border:none; color:var(--color-text-placeholder); width:16px; height:16px; padding:0; }
+
+  .id-right-panel { flex:1; min-width:0; background:#fff; border:1px solid var(--border-light); border-radius:4px; padding:16px; }
+  .id-image-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:12px; color:var(--color-text-placeholder); }
+  .id-image-toolbar .spacer { flex:1; }
+  .id-bill-image-wrap { border:1px solid var(--border-light); background:#F7F9FB; text-align:center; padding:8px; overflow:auto; max-height:520px; }
+  .id-bill-image-wrap img { max-width:100%; display:inline-block; }
+
+  .id-tabs { display:flex; gap:20px; border-bottom:1px solid var(--border-light); margin-bottom:12px; }
+  .id-tabs .tab { padding:8px 2px 10px; font-size:13px; color:var(--color-text-default); border-bottom:2px solid transparent; }
+  .id-tabs .tab.active { color:var(--color-link); border-bottom-color:var(--color-link); font-weight:600; }
+
+  .id-lineitems { display:flex; gap:16px; background:#fff; border:1px solid var(--border-light); border-radius:4px; padding:16px; }
+  .id-li-table-wrap { flex:1; min-width:0; }
+  table.li-table { width:100%; border-collapse:collapse; font-size:13px; }
+  table.li-table th, table.li-table td { text-align:left; padding:8px 10px; border-top:1px solid var(--border-default); }
+  table.li-table th { background:var(--bg-surface-secondary); font-weight:600; }
+  table.li-table td.num, table.li-table th.num { text-align:right; }
+
+  .id-summary { width:260px; min-width:260px; font-size:13px; }
+  .id-summary-row { display:flex; justify-content:space-between; padding:6px 0; }
+  .id-summary-row.total { border-top:1px solid var(--border-default); font-weight:700; margin-top:4px; padding-top:10px; }
+
+  .toggle-row { display:flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body data-app="invoice" data-active-nav="invoice">
+<div id="aip-header"></div>
+<div class="aip-body">
+  <div id="aip-sidenav"></div>
+  <main class="aip-content">
+
+    <div class="id-topbar">
+      <div class="id-title">
+        <h1>
+          <svg class="bookmark" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>
+          INVOICE # <span id="invoiceNumber">17</span>
+        </h1>
+        <span class="pill-purple">Time Sensitive Payment</span>
+      </div>
+      <div class="id-actions">
+        <span class="view-label">VIEW</span>
+        <div class="id-seg">
+          <button class="active">Header</button>
+          <button>Associated Invoices</button>
+        </div>
+        <button class="btn btn-secondary" onclick="return false;">Save</button>
+        <button class="btn btn-secondary" onclick="return false;">Create Report</button>
+        <button class="btn btn-primary" id="submitBtn">Submit</button>
+        <button class="btn btn-secondary" onclick="return false;">More</button>
+      </div>
+    </div>
+
+    <!-- Banner: swapped in by scenario, see script at bottom -->
+    <div id="scenarioBanner"></div>
+
+    <div class="id-panels">
+      <div class="id-left-panel">
+        <h2>Header</h2>
+
+        <div class="id-field-row"><div class="id-label">Invoice #</div><div class="id-value plain">17</div></div>
+        <div class="id-field-row"><div class="id-label">Invoice Total</div><div class="id-value plain">75.00</div></div>
+        <div class="id-field-row"><div class="id-label">Invoice Status</div><div class="id-value plain">PENDING APPROVAL</div></div>
+        <div class="id-field-row">
+          <div class="id-label">Match Policy</div>
+          <div class="id-value"><select><option>2 Way with 5% Tolerance</option></select></div>
+        </div>
+        <div class="id-field-row">
+          <div class="id-label">Match Status</div>
+          <div class="id-value plain"><span class="pill pill-success">&#10003; Order Lines</span></div>
+        </div>
+        <div class="id-field-row"><div class="id-label">Invoice Date</div><div class="id-value plain">12/6/2024</div></div>
+        <div class="id-field-row"><div class="id-label">Invoice Posting Date</div><div class="id-value plain">12/6/2024</div></div>
+        <div class="id-field-row"><div class="id-label">Invoice Due Date</div><div class="id-value plain">12/6/2024</div></div>
+        <div class="id-field-row">
+          <div class="id-label">Supplier</div>
+          <div class="id-value addr"><strong>Staples</strong><br />New York, NY</div>
+        </div>
+        <div class="id-field-row"><div class="id-label">Customer Account #</div><div class="id-value plain">1254713</div></div>
+        <div class="id-field-row">
+          <div class="id-label">PO #</div>
+          <div class="id-value" style="color:var(--color-link);">658 &#9998;</div>
+        </div>
+        <div class="id-field-row">
+          <div class="id-label">Entity</div>
+          <div class="id-value addr"><strong>Bonehold (008)</strong></div>
+        </div>
+
+        <div class="id-auto-row">
+          <span class="label">Auto-initiate payments</span>
+          <button class="info-btn" id="autoInfoBtn" title="What does this mean?">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v6M12 7.3v.1"/></svg>
+          </button>
+          <label class="toggle">
+            <input type="checkbox" id="autoToggle" checked />
+            <span class="track"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="id-right-panel">
+        <div class="id-image-toolbar">
+          <button class="btn btn-secondary" style="height:28px;font-size:12px;" onclick="return false;">Swap Image</button>
+          <span class="spacer"></span>
+          <span>1 of 1</span>
+          <span>Automatic Zoom</span>
+        </div>
+        <div class="id-bill-image-wrap">
+          <img src="../assets/invoice-pay/sample-customer-bill.png" alt="Sample scanned customer bill (Comcast placeholder)" />
+        </div>
+      </div>
+    </div>
+
+    <div class="id-tabs">
+      <div class="tab active">Line Items (3)</div>
+      <div class="tab">Attachments (1)</div>
+      <div class="tab">Comments (1)</div>
+      <div class="tab">Workflow</div>
+      <div class="tab">History</div>
+    </div>
+
+    <div class="id-lineitems">
+      <div class="id-li-table-wrap">
+        <table class="li-table">
+          <thead>
+            <tr>
+              <th>Source Record</th>
+              <th>Quantity</th>
+              <th>Item Number</th>
+              <th>Description</th>
+              <th>UOM</th>
+              <th class="num">Unit Price</th>
+              <th class="num">Line Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>81</td><td>1</td><td>2243</td><td>Stapler</td><td>EACH</td><td class="num">5.00</td><td class="num">5.00</td></tr>
+            <tr><td>81</td><td>1</td><td>9889</td><td>Coffee machine</td><td>EACH</td><td class="num">60.00</td><td class="num">60.00</td></tr>
+            <tr><td>81</td><td>5</td><td>0934</td><td>Note pads</td><td>EACH</td><td class="num">1.00</td><td class="num">5.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="id-summary">
+        <div class="id-summary-row"><span>Subtotal</span><span>70.00</span></div>
+        <div class="id-summary-row"><span>Shipping Cost</span><span>0.00</span></div>
+        <div class="id-summary-row"><span>Sales Tax</span><span>0.00</span></div>
+        <div class="id-summary-row"><span>Additional Tax</span><span>0.00</span></div>
+        <div class="id-summary-row"><span>Other +/- Price Adjustments</span><span>0.00</span></div>
+        <div class="id-summary-row"><span>Discount</span><span>0.00</span></div>
+        <div class="id-summary-row total"><span>Invoice Total</span><span>75.00</span></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Auto-initiate payments explainer modal (deliberate simplification of the
+     Figma "Auto-initiate payments is on/3" and "...is off/3" overlay frames
+     into one reusable modal driven by the toggle's current state). -->
+<div class="modal-overlay" id="autoModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="autoModalTitle">Auto-initiate payments is on</h3>
+      <button class="modal-close" id="autoModalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Approved payments will be initiated automatically and sent to AvidPay in batches, no manual action needed. You can turn this off anytime.</p>
+      <div id="autoModalOffExtra" style="display:none; margin-top:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--border-light); padding-top:12px;">
+          <div>
+            <strong style="font-size:13px;">Auto Initiation</strong>
+            <div class="text-muted" style="font-size:12px;">Automatically initiate transaction batches when ready</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="autoModalToggle" /><span class="track"></span></label>
+        </div>
+      </div>
+      <label style="display:flex; align-items:center; gap:6px; font-size:13px; margin-top:14px;" id="autoModalCheckboxWrap">
+        <input type="checkbox" id="autoModalDontShow" /> Got it, don't show this again
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="autoModalConfirm">Got it!</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/chrome-invoice.js"></script>
+<script>
+  (function () {
+    var SCENARIOS = {
+      fine: {
+        type: 'success',
+        title: 'Everything looks fine.',
+        body: 'No anomalies detected. Payment scheduled for 09/22/2026'
+      },
+      anomaly: {
+        type: 'warning',
+        title: 'Bill significantly higher than average',
+        body: 'This bill is 143% higher than the average amount for this account. Review the invoice before approving payment.'
+      },
+      'no-stp': {
+        type: 'warning',
+        title: 'Duplicate/unexpected bill',
+        body: 'A similar invoice from this provider was recently received for the same billing period. Review before approving payment.'
+      }
+    };
+
+    var params = new URLSearchParams(location.search);
+    var scenario = params.get('scenario') || 'fine';
+    var data = SCENARIOS[scenario] || SCENARIOS.fine;
+
+    var iconSuccess = '<svg class="a-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.5 2.5 2.5L16 9"/></svg>';
+    var iconWarning = '<svg class="a-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.5v5.5M12 16v.1"/></svg>';
+
+    var boxClass = data.type === 'success' ? 'alert-success-box' : 'alert-warning';
+    var icon = data.type === 'success' ? iconSuccess : iconWarning;
+
+    document.getElementById('scenarioBanner').innerHTML =
+      '<div class="' + boxClass + '">' +
+        icon +
+        '<div><p class="a-title">' + data.title + '</p><p class="a-body">' + data.body + '</p></div>' +
+        '<button class="a-close" onclick="this.closest(\'.' + boxClass + '\').style.display=\'none\'">&times;</button>' +
+      '</div>';
+
+    // "Submit" is this shared invoice-detail page's primary action; every
+    // scenario flow ends the same way, on pay home.
+    document.getElementById('submitBtn').addEventListener('click', function () {
+      window.location.href = 'pay-home.html';
+    });
+
+    // Auto-initiate payments toggle -> explainer modal (on/off copy from the
+    // Figma "Auto-initiate payments is on/off" overlay frames).
+    var overlay = document.getElementById('autoModalOverlay');
+    var toggle = document.getElementById('autoToggle');
+    var title = document.getElementById('autoModalTitle');
+    var offExtra = document.getElementById('autoModalOffExtra');
+    var checkboxWrap = document.getElementById('autoModalCheckboxWrap');
+    var confirmBtn = document.getElementById('autoModalConfirm');
+    var modalToggle = document.getElementById('autoModalToggle');
+
+    function openModalFor(isOn) {
+      title.textContent = 'Auto-initiate payments is ' + (isOn ? 'on' : 'off');
+      offExtra.style.display = isOn ? 'none' : 'block';
+      checkboxWrap.style.display = isOn ? 'flex' : 'none';
+      confirmBtn.textContent = isOn ? 'Got it!' : 'Turn on';
+      modalToggle.checked = isOn;
+      overlay.classList.add('open');
+    }
+
+    function closeModal() { overlay.classList.remove('open'); }
+
+    toggle.addEventListener('change', function () { openModalFor(toggle.checked); });
+    document.getElementById('autoInfoBtn').addEventListener('click', function () { openModalFor(toggle.checked); });
+    document.getElementById('autoModalClose').addEventListener('click', closeModal);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+    confirmBtn.addEventListener('click', function () {
+      // "Turn on" flips the switch back on; "Got it!" just dismisses.
+      if (confirmBtn.textContent === 'Turn on') { toggle.checked = true; }
+      closeModal();
+    });
+    modalToggle.addEventListener('change', function () { toggle.checked = modalToggle.checked; });
+  })();
+</script>
+</body>
+</html>

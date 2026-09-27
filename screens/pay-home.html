@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Pay Home - AvidPay</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  /* Scoped to this "Invoice and pay" flow only — extends shared.css tokens,
+     never edits it. */
+  .ph-tabs { display:flex; gap:24px; border-bottom:1px solid var(--border-light); margin-bottom:16px; }
+  .ph-tabs .tab { padding:8px 2px 12px; font-size:14px; color:var(--color-text-default); border-bottom:2px solid transparent; font-weight:600; }
+  .ph-tabs .tab.active { color:var(--color-link); border-bottom-color:var(--color-link); }
+
+  .ph-toolbar { display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-bottom:8px; }
+  .ph-toolbar .btn { height:30px; font-size:12px; padding:0 12px; }
+  .ph-toolbar .icon-btn { width:30px; height:30px; border:1px solid var(--border-default); border-radius:4px; background:#fff; display:flex; align-items:center; justify-content:center; }
+  .ph-toolbar .icon-btn svg { width:14px; height:14px; color:var(--color-text-placeholder); }
+
+  .ph-filters { display:flex; justify-content:flex-end; gap:8px; margin-bottom:8px; }
+  .ph-filters .search-input-wrap input { height:30px; font-size:12px; width:160px; }
+  .ph-filters select { height:30px; font-size:12px; border:1px solid var(--border-default); border-radius:4px; }
+
+  .ph-table-wrap { background:#fff; border:1px solid var(--border-light); }
+  table.ph-table { width:100%; border-collapse:collapse; font-size:12px; }
+  table.ph-table th, table.ph-table td { text-align:left; padding:8px 10px; border-top:1px solid var(--border-default); white-space:nowrap; }
+  table.ph-table th { background:var(--bg-surface-secondary); font-weight:600; font-size:12px; }
+  .chip-auto { display:inline-block; font-size:10px; font-weight:600; color:var(--color-link); background:#EAF3FF; border:1px solid #B9D8FF; border-radius:10px; padding:1px 8px; }
+
+  .ph-footer { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid var(--border-default); font-size:12px; color:var(--color-text-placeholder); }
+</style>
+</head>
+<body data-app="pay" data-active-nav="pay">
+<div id="aip-header"></div>
+<div class="aip-body">
+  <div id="aip-sidenav"></div>
+  <main class="aip-content">
+
+    <div class="ph-tabs">
+      <div class="tab active">Batches</div>
+      <div class="tab">Approvals</div>
+      <div class="tab">Manage Workflows</div>
+    </div>
+
+    <div class="ph-toolbar">
+      <button class="btn btn-primary" onclick="return false;">Upload</button>
+      <button class="icon-btn" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 6v5h-5"/></svg>
+      </button>
+    </div>
+
+    <div class="ph-filters">
+      <div class="search-input-wrap">
+        <img src="../assets/icons/search.svg" alt="" />
+        <input type="search" placeholder="Search..." />
+      </div>
+      <select><option>Last 30 Days</option></select>
+    </div>
+
+    <div class="ph-table-wrap">
+      <table class="ph-table">
+        <thead>
+          <tr>
+            <th>Batch ID</th>
+            <th>Payment Count</th>
+            <th>Created By</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>TSP</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>2025-12-02T12:22:21.674Z</td><td>1</td><td>avidapi@avidavidxchange.com.com</td><td>$1,101.25</td><td>12/02/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Processing</td></tr>
+          <tr><td>2025-11-24T12:22:21.674Z</td><td>2</td><td>avidapi@avidavidxchange.com.com</td><td>$1,272.86</td><td>11/24/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Processing</td></tr>
+          <tr><td>2025-11-24T11:00:00.000Z</td><td>7</td><td>contact@corporate.com</td><td>$80,000.00</td><td>11/24/2025</td><td></td><td>Closed</td></tr>
+          <tr><td>2025-11-26T13:15:15.234Z</td><td>9</td><td>sales@marketplace.com</td><td>$90,000.00</td><td>11/26/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+          <tr><td>2025-11-28T10:30:30.987Z</td><td>11</td><td>admin@platform.com</td><td>$65,000.00</td><td>11/28/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+          <tr><td>2025-11-29T12:45:00.654Z</td><td>12</td><td>user@application.com</td><td>$55,000.00</td><td>11/29/2025</td><td></td><td>Open</td></tr>
+          <tr><td>2025-11-30T14:00:00.567Z</td><td>13</td><td>contact@solution.com</td><td>$75,000.00</td><td>11/30/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+          <tr><td>2025-12-01T09:45:45.789Z</td><td>14</td><td>support@assistance.com</td><td>$60,000.00</td><td>12/01/2025</td><td></td><td>Pending</td></tr>
+          <tr><td>2025-12-02T16:20:20.345Z</td><td>15</td><td>info@service.com</td><td>$85,000.00</td><td>12/02/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+          <tr><td>2025-12-03T11:30:11.222Z</td><td>16</td><td>hello@userportal.com</td><td>$68,000.00</td><td>12/03/2025</td><td></td><td>Open</td></tr>
+          <tr><td>2025-12-04T13:55:30.456Z</td><td>17</td><td>client@webapp.com</td><td>$79,000.00</td><td>12/04/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+          <tr><td>2025-12-05T14:30:00.123Z</td><td>18</td><td>sales@ecommerce.com</td><td>$52,000.00</td><td>12/05/2025</td><td></td><td>Pending</td></tr>
+          <tr><td>2025-12-06T10:10:10.109Z</td><td>19</td><td>contacts@startup.com</td><td>$65,000.00</td><td>12/06/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+          <tr><td>2025-12-07T15:15:15.333Z</td><td>20</td><td>support@tech.com</td><td>$90,000.00</td><td>12/07/2025</td><td></td><td>Open</td></tr>
+        </tbody>
+      </table>
+      <div class="ph-footer">
+        <span>50 items per page</span>
+        <span>1 - 13 of 13</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="../js/chrome-invoice.js"></script>
+</body>
+</html>

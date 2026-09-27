@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Invoice Home - AvidInvoice</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  /* Scoped to this "Invoice and pay" flow only — extends shared.css tokens,
+     never edits it. */
+  .ih-toolbar { display:flex; justify-content:flex-end; margin-bottom:12px; }
+
+  .ih-tabs { display:flex; gap:2px; margin-bottom:0; }
+  .ih-tab {
+    display:flex; align-items:center; gap:6px; padding:8px 12px;
+    font-size:12px; color:#777; background:#dbdbdb; border-top:2px solid transparent;
+  }
+  .ih-tab.active { background:#fff; color:#333; border-top-color:#0684c9; font-weight:600; }
+  .ih-tab .count {
+    min-width:16px; padding:2px 6px; border-radius:10px; background:#ec9f0c; color:#fff;
+    font-size:10px; text-align:center; line-height:1;
+  }
+  .ih-tab.active .count { background:#0684c9; }
+
+  .alert-warning {
+    display:flex; align-items:flex-start; gap:10px; padding:12px 16px; border-radius:4px;
+    margin-bottom:16px; background:#FFFAE6; border:1px solid #F58312; position:relative;
+  }
+  .alert-warning .aw-icon { width:20px; height:20px; flex-shrink:0; color:#F58312; }
+  .alert-warning .aw-title { font-weight:600; font-size:14px; margin:0 0 4px; }
+  .alert-warning .aw-body { font-size:14px; margin:0 0 4px; color:var(--color-text-default); }
+  .alert-warning .aw-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#8D9AA3; font-size:14px; }
+
+  .ih-table-wrap { background:#fff; border:1px solid var(--border-light); overflow-x:auto; }
+  table.ih-table { width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap; }
+  table.ih-table th, table.ih-table td { text-align:left; padding:8px 10px; border-top:1px solid var(--border-default); }
+  table.ih-table th { background:var(--bg-surface-secondary); font-weight:600; font-size:13px; }
+  table.ih-table td.actions-cell { display:flex; gap:4px; }
+  table.ih-table td.actions-cell .row-icon-btn {
+    width:22px; height:22px; border-radius:3px; background:var(--color-primary-b60); color:#fff;
+    display:flex; align-items:center; justify-content:center; border:none;
+  }
+  table.ih-table td.actions-cell .row-icon-btn svg { width:13px; height:13px; }
+  table.ih-table .flag-icon { display:inline-flex; vertical-align:-3px; width:14px; height:14px; color:#F58312; margin-right:4px; }
+  table.ih-table tr.flag-row td { background:#FFFDF5; }
+
+  .ih-footer { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid var(--border-default); font-size:12px; color:var(--color-text-placeholder); }
+</style>
+</head>
+<body data-app="invoice" data-active-nav="invoice">
+<div id="aip-header"></div>
+<div class="aip-body">
+  <div id="aip-sidenav"></div>
+  <main class="aip-content">
+
+    <div class="ih-toolbar">
+      <a class="btn btn-primary" href="#" onclick="return false;">+ Create Invoice</a>
+    </div>
+
+    <div class="alert-warning">
+      <svg class="aw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.5v5.5M12 16v.1"/></svg>
+      <div>
+        <p class="aw-title">Time Sensitive Payment</p>
+        <p class="aw-body">You have a time sensitive payment pending approval</p>
+        <a href="#" onclick="return false;">Go to pending approval</a>
+      </div>
+      <button class="aw-close" onclick="this.closest('.alert-warning').style.display='none'">&times;</button>
+    </div>
+
+    <div class="ih-tabs">
+      <div class="ih-tab active">Pending Approval <span class="count">1</span></div>
+      <div class="ih-tab">Disputed <span class="count">0</span></div>
+      <div class="ih-tab">Time Sensitive <span class="count">0</span></div>
+    </div>
+
+    <div class="ih-table-wrap">
+      <table class="ih-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" /></th>
+            <th></th>
+            <th>Invoice #</th>
+            <th>Invoice Date</th>
+            <th>Due Date</th>
+            <th>Supplier</th>
+            <th>Supplier ID</th>
+            <th>Total</th>
+            <th>Entity</th>
+            <th>Entity Code</th>
+            <th>Action</th>
+            <th>Days Held</th>
+            <th>Ordered By</th>
+            <th>Proxy For</th>
+            <th>PO Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1: normal invoice -> "fine" scenario -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td class="actions-cell">
+              <button class="row-icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5.5 16Z"/></svg></button>
+              <button class="row-icon-btn" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg></button>
+            </td>
+            <td><a href="invoice-detail.html?scenario=fine">TestContract17</a></td>
+            <td>12/13/2022</td>
+            <td>01/12/2023</td>
+            <td>Wolf in Cheap Clothing Pet Apparel</td>
+            <td>V00008</td>
+            <td>75.00</td>
+            <td>Angelcairn (abc123!@#$%^&amp;*)</td>
+            <td>0062</td>
+            <td>(Re-Approve) EFC 2</td>
+            <td>10</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <!-- Row 2: flagged -> "anomaly" scenario -->
+          <tr class="flag-row">
+            <td><input type="checkbox" /></td>
+            <td class="actions-cell">
+              <button class="row-icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5.5 16Z"/></svg></button>
+              <button class="row-icon-btn" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg></button>
+            </td>
+            <td>
+              <svg class="flag-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6.5 6.5 11h-13L12 8.5ZM11 10h2v5h-2v-5Zm0 6.5h2v2h-2v-2Z"/></svg>
+              <a href="invoice-detail.html?scenario=anomaly">TestContract18</a>
+            </td>
+            <td>12/13/2022</td>
+            <td>01/12/2023</td>
+            <td>Wolf in Cheap Clothing Pet Apparel</td>
+            <td>V00008</td>
+            <td>75.00</td>
+            <td>Angelcairn (abc123!@#$%^&amp;*)</td>
+            <td>0062</td>
+            <td>(Re-Approve) EFC 2</td>
+            <td>10</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <!-- Row 3: flagged -> "no-stp" scenario -->
+          <tr class="flag-row">
+            <td><input type="checkbox" /></td>
+            <td class="actions-cell">
+              <button class="row-icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5.5 16Z"/></svg></button>
+              <button class="row-icon-btn" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg></button>
+            </td>
+            <td>
+              <svg class="flag-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6.5 6.5 11h-13L12 8.5ZM11 10h2v5h-2v-5Zm0 6.5h2v2h-2v-2Z"/></svg>
+              <a href="invoice-detail.html?scenario=no-stp">TestContract19</a>
+            </td>
+            <td>12/13/2022</td>
+            <td>01/12/2023</td>
+            <td>Wolf in Cheap Clothing Pet Apparel</td>
+            <td>V00008</td>
+            <td>75.00</td>
+            <td>Angelcairn (abc123!@#$%^&amp;*)</td>
+            <td>0062</td>
+            <td>(Re-Approve) EFC 2</td>
+            <td>10</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <!-- Remaining rows: same placeholder data as the Figma source, not wired to a scenario -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td class="actions-cell">
+              <button class="row-icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5.5 16Z"/></svg></button>
+              <button class="row-icon-btn" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg></button>
+            </td>
+            <td>TestContract01</td>
+            <td>12/13/2022</td>
+            <td>01/12/2023</td>
+            <td>Wolf in Cheap Clothing Pet Apparel</td>
+            <td>V00008</td>
+            <td>1.00</td>
+            <td>Angelcairn (abc123!@#$%^&amp;*)</td>
+            <td>0062</td>
+            <td>(Re-Approve) EFC 2</td>
+            <td>10</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td class="actions-cell">
+              <button class="row-icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5.5 16Z"/></svg></button>
+              <button class="row-icon-btn" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg></button>
+            </td>
+            <td>TestContract01</td>
+            <td>12/13/2022</td>
+            <td>01/12/2023</td>
+            <td>Wolf in Cheap Clothing Pet Apparel</td>
+            <td>V00008</td>
+            <td>1.00</td>
+            <td>Angelcairn (abc123!@#$%^&amp;*)</td>
+            <td>0062</td>
+            <td>(Re-Approve) EFC 2</td>
+            <td>10</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ih-footer">
+        <span>25 items per page</span>
+        <span>1 - 5 of 5 items</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="../js/chrome-invoice.js"></script>
+</body>
+</html>

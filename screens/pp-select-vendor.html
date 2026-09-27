@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Select Vendor Account - Priority Payments - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .pp-table { width: 100%; border-collapse: collapse; }
+  .pp-table th, .pp-table td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--border-default); font-size: 14px; height: 56px; }
+  .pp-table th { background: var(--bg-surface-secondary); font-weight: 600; font-size: 16px; }
+  .pp-table td.checkbox-cell, .pp-table th.checkbox-cell { width: 40px; }
+  .pp-table td.menu-cell, .pp-table th.menu-cell { width: 32px; text-align: center; color: var(--color-text-placeholder); }
+  .pp-table input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--color-primary-b60); cursor: pointer; }
+  .pp-table tbody tr.selected td { background: #F0F7FF; }
+  .pp-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .pp-toolbar .search-input-wrap { width: 270px; }
+  .pp-toolbar .search-input-wrap input { font-style: italic; }
+  .pp-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 12px; border-top: 1px solid var(--border-default); font-size: 13px; color: var(--color-text-placeholder); }
+  .pp-pagination button { background: none; border: 1px solid var(--border-default); border-radius: 4px; width: 28px; height: 28px; color: var(--color-text-default); }
+  .pp-context-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; color: var(--color-text-placeholder); margin-bottom: 6px; }
+  .pp-provider-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-surface-secondary); border: 1px solid var(--border-light); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--color-text-default); margin-bottom: 20px; }
+  .pp-heading { font-size: 24px; font-weight: 600; margin: 0 0 4px; }
+  .pp-subtext { font-size: 14px; color: var(--color-text-placeholder); margin: 0 0 20px; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <a href="../screens/home-connected.html">Priority Payments</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Set Up Payments</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="current">
+          <span class="dot">1</span>
+          <span class="step-label">Select Vendor account<span class="step-status">In progress</span></span>
+        </li>
+        <li>
+          <span class="dot">2</span>
+          <span class="step-label">Confirm Address</span>
+        </li>
+        <li>
+          <span class="dot">3</span>
+          <span class="step-label">Select Funding Account</span>
+        </li>
+        <li>
+          <span class="dot">4</span>
+          <span class="step-label">Set Priority Payment Rules</span>
+        </li>
+        <li>
+          <span class="dot">5</span>
+          <span class="step-label">Review and Enroll</span>
+        </li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1 class="pp-heading">Select the account you want to enroll on Priority Payments</h1>
+        <p class="pp-subtext">Choose one vendor account below, then continue to confirm its address.</p>
+
+        <div class="wizard-body">
+          <p class="pp-context-label">BILL PROVIDER:</p>
+          <div class="pp-provider-pill">Comcast</div>
+
+          <div class="pp-toolbar">
+            <div class="search-input-wrap">
+              <img src="../assets/icons/search.svg" alt="" />
+              <input type="search" placeholder="Search vendor accounts" />
+            </div>
+            <button type="button" class="btn btn-secondary">Filter</button>
+          </div>
+
+          <table class="pp-table">
+            <thead>
+              <tr>
+                <th class="checkbox-cell"></th>
+                <th>Entity</th>
+                <th>Provider Account Number</th>
+                <th>Vendor Name</th>
+                <th>Vendor Account Number</th>
+                <th class="menu-cell"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="selected">
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" checked /></td>
+                <td>Harmony Building</td>
+                <td>2391031032</td>
+                <td>Comcast Internet South</td>
+                <td>HR1-332</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>Willow Haven</td>
+                <td>234928392</td>
+                <td>Comcast Internet 3</td>
+                <td>HR1-332</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>Juniper</td>
+                <td>338228932</td>
+                <td>Comcast Internet - new</td>
+                <td>HR1-3326</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>The Camden</td>
+                <td>338284929</td>
+                <td>Comcast Internet South</td>
+                <td>HR1-331</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>Blue Sky</td>
+                <td>328382949</td>
+                <td>Comcast Internet South</td>
+                <td>HR1-331</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>Elora Towers</td>
+                <td>324328442</td>
+                <td>Comcast Internet South</td>
+                <td>HR1-331</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>Base B Homes</td>
+                <td>2391031032</td>
+                <td>Comcast Internet South</td>
+                <td>HR1-331</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" name="pp-vendor" /></td>
+                <td>The Grand suites</td>
+                <td>2391031032</td>
+                <td>Comcast Internet South</td>
+                <td>HR1-331</td>
+                <td class="menu-cell">&#8942;</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pp-pagination">
+            <button type="button" aria-label="Previous page">&#8249;</button>
+            <span>1-8 of 100</span>
+            <button type="button" aria-label="Next page">&#8250;</button>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <a href="pp-confirm-address.html" class="btn btn-primary">Next</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  // Single-select checkbox behavior: checking one row unchecks all others,
+  // like a radio group but rendered as checkboxes per the designer's spec.
+  document.querySelectorAll('.pp-table input[type=checkbox]').forEach(function (box) {
+    box.addEventListener('change', function () {
+      var checked = box.checked;
+      document.querySelectorAll('.pp-table input[type=checkbox]').forEach(function (other) {
+        if (other !== box) other.checked = false;
+        other.closest('tr').classList.toggle('selected', other.checked);
+      });
+      if (!checked) box.closest('tr').classList.remove('selected');
+    });
+  });
+</script>
+</body>
+</html>

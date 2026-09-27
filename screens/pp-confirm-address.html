@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Confirm Vendor Address - Priority Payments - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .pp-heading { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .pp-subtext { font-size: 14px; color: var(--color-text-default); margin: 0 0 20px; }
+  .pp-tag-row { display: flex; gap: 32px; margin-bottom: 12px; }
+  .pp-tag-row .pp-tag-group { display: flex; flex-direction: column; gap: 6px; }
+  .pp-context-label { font-size: 12px; font-weight: 600; letter-spacing: .5px; color: var(--color-text-placeholder); margin: 0; }
+  .pp-provider-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-surface-secondary); border: 1px solid var(--border-light); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--color-text-default); width: fit-content; }
+  .pp-address-card { border: 1px solid var(--border-light); border-radius: 6px; padding: 20px; margin-bottom: 24px; }
+  .pp-address-grid { display: grid; grid-template-columns: 160px 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+  .pp-address-grid .field-label { font-size: 12px; color: var(--color-text-placeholder); margin: 0 0 4px; }
+  .pp-address-grid .field-value { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+  .pp-address-grid .field-block { margin-bottom: 14px; }
+  .pp-address-grid h4 { font-size: 14px; font-weight: 600; margin: 0 0 10px; }
+  .pp-address-grid .addr-line { font-size: 14px; margin: 0 0 12px; }
+  .pp-address-grid .addr-line .field-label { margin-bottom: 2px; }
+  .pp-edit-form { display: none; }
+  .pp-edit-form.editing { display: block; }
+  .pp-address-static.hidden { display: none; }
+  .pp-edit-form .field input { margin-bottom: 8px; }
+  .validate-btn { display: block; width: 100%; text-align: center; background: #fff; border: 1px solid var(--color-primary-b60); color: var(--color-link); font-weight: 600; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+  .validate-btn:disabled { border-color: var(--border-default); color: var(--color-text-disabled); cursor: not-allowed; background: var(--bg-surface-secondary); }
+  .pill-validated { display: inline-flex; align-items: center; gap: 4px; border: 1px solid #B7E4C7; color: #1E6B3C; background: #E9F7EF; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 4px; margin-bottom: 14px; }
+  .apply-all-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .apply-all-table th, .apply-all-table td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--border-default); font-size: 14px; height: 48px; }
+  .apply-all-table th { background: var(--bg-surface-secondary); font-weight: 600; font-size: 15px; }
+  .apply-all-table td.checkbox-cell, .apply-all-table th.checkbox-cell { width: 40px; }
+  .apply-all-table input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--color-primary-b60); }
+  .pp-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 12px; border-top: 1px solid var(--border-default); font-size: 13px; color: var(--color-text-placeholder); }
+  .pp-pagination button { background: none; border: 1px solid var(--border-default); border-radius: 4px; width: 28px; height: 28px; color: var(--color-text-default); }
+  #validating-banner.active { display: flex; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <a href="../screens/home-connected.html">Priority Payments</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Set Up Payments</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done">
+          <span class="dot">1</span>
+          <span class="step-label">Select Vendor account<span class="step-status">Success</span></span>
+        </li>
+        <li class="current">
+          <span class="dot">2</span>
+          <span class="step-label">Confirm Address<span class="step-status">In progress</span></span>
+        </li>
+        <li>
+          <span class="dot">3</span>
+          <span class="step-label">Select Funding Account</span>
+        </li>
+        <li>
+          <span class="dot">4</span>
+          <span class="step-label">Set Priority Payment Rules</span>
+        </li>
+        <li>
+          <span class="dot">5</span>
+          <span class="step-label">Review and Enroll</span>
+        </li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1 class="pp-heading">Confirm Vendor Address</h1>
+        <p class="pp-subtext">Make sure that the physical address and remittance address matches your records.</p>
+
+        <div class="pp-tag-row">
+          <div class="pp-tag-group">
+            <p class="pp-context-label">BILL PROVIDER:</p>
+            <div class="pp-provider-pill">Comcast Internet</div>
+          </div>
+          <div class="pp-tag-group">
+            <p class="pp-context-label">VENDOR RECORD:</p>
+            <div class="pp-provider-pill">Comcast Internet South</div>
+          </div>
+        </div>
+
+        <div class="wizard-body">
+          <div class="pp-address-card">
+
+            <!-- Stage 3 badge, only shown once validated -->
+            <span id="validated-pill" class="pill-validated" style="display:none;">&#10003; Address Validated</span>
+
+            <!-- Stage 2 validating banner -->
+            <div id="validating-banner" class="alert alert-info stage" style="align-items:center;">
+              <span>&#9888;</span>
+              <div>
+                <strong>Validating your address</strong>
+                <div style="font-size:13px;">This can take a few minutes. You can continue setup: Priority Payment enrollment for this account will show as Pending until the address is verified.</div>
+              </div>
+            </div>
+
+            <div class="pp-address-grid">
+              <div>
+                <div class="field-block">
+                  <p class="field-label">Vendor Account</p>
+                  <p class="field-value">HR1-332</p>
+                </div>
+                <div class="field-block">
+                  <p class="field-label">Entity</p>
+                  <span class="pill pill-muted">Harmony Building</span>
+                </div>
+              </div>
+
+              <div>
+                <h4>Vendor's Physical Address:</h4>
+                <div class="pp-address-static" data-addr="physical">
+                  <p class="addr-line"><span class="field-label" style="display:block;">Street</span>13 Hoshead Lane</p>
+                  <p class="addr-line"><span class="field-label" style="display:block;">City, State, Zip</span>Charlotte, NC 28110</p>
+                  <a href="#" class="btn-tertiary edit-address-link" data-target="physical">Edit</a>
+                </div>
+                <div class="pp-edit-form" data-form="physical">
+                  <div class="field"><label>Street address</label><input type="text" value="13 Hoshead Lane" /></div>
+                  <div class="field" style="width:120px;"><label>ZIP code</label><input type="text" value="28110" /></div>
+                  <button type="button" class="btn btn-secondary submit-address" data-target="physical">Submit</button>
+                </div>
+              </div>
+
+              <div>
+                <h4>Remittance Address:</h4>
+                <div class="pp-address-static" data-addr="remittance">
+                  <p class="addr-line"><span class="field-label" style="display:block;">Street</span>13 Hoshead Lane</p>
+                  <p class="addr-line"><span class="field-label" style="display:block;">City, State, Zip</span>Charlotte, NC 28110</p>
+                  <a href="#" class="btn-tertiary edit-address-link" data-target="remittance">Edit</a>
+                </div>
+                <div class="pp-edit-form" data-form="remittance">
+                  <div class="field"><label>Street address</label><input type="text" value="13 Hoshead Lane" /></div>
+                  <div class="field" style="width:120px;"><label>ZIP code</label><input type="text" value="28110" /></div>
+                  <button type="button" class="btn btn-secondary submit-address" data-target="remittance">Submit</button>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" id="validate-address-btn" class="validate-btn">Validate Address</button>
+          </div>
+
+          <p style="font-weight:600; margin-bottom:8px;">Apply to all Vendor Accounts registered to this Vendor: (optional)</p>
+          <table class="apply-all-table">
+            <thead>
+              <tr>
+                <th class="checkbox-cell"></th>
+                <th>Entity</th>
+                <th>Account Number</th>
+                <th>Vendor Account Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Harmony Homes</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Willow Haven</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Haven</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Juniper</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Camden</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Hawthorne</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Grandview</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Elora</td><td>89283918</td><td>HB22-33</td></tr>
+            </tbody>
+          </table>
+          <div class="pp-pagination">
+            <button type="button" aria-label="Previous page">&#8249;</button>
+            <span>1-8 of 100</span>
+            <button type="button" aria-label="Next page">&#8250;</button>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <div style="display:flex; gap:24px; align-items:center;">
+            <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <a href="pp-select-vendor.html" class="btn btn-secondary">Back</a>
+            <a href="pp-select-funding.html" id="next-btn" class="btn btn-primary" style="display:none;">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  // Inline "Edit address" toggle: swaps the static Street/City,State,Zip
+  // display for editable inputs + a Submit button, matching the Figma
+  // "Edit address" frames (7026:24325 / 7026:24891) which show the physical
+  // and remittance address fields turning into inputs in place -- this reads
+  // as an inline edit, not a modal or side-sheet, so it's implemented as one.
+  document.querySelectorAll('.edit-address-link').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = link.getAttribute('data-target');
+      document.querySelector('.pp-address-static[data-addr="' + target + '"]').classList.add('hidden');
+      document.querySelector('.pp-edit-form[data-form="' + target + '"]').classList.add('editing');
+    });
+  });
+  document.querySelectorAll('.submit-address').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-target');
+      document.querySelector('.pp-address-static[data-addr="' + target + '"]').classList.remove('hidden');
+      document.querySelector('.pp-edit-form[data-form="' + target + '"]').classList.remove('editing');
+    });
+  });
+
+  // Stage progression: confirm -> validating -> validated (auto-advance).
+  var validateBtn = document.getElementById('validate-address-btn');
+  var banner = document.getElementById('validating-banner');
+  var pill = document.getElementById('validated-pill');
+  var nextBtn = document.getElementById('next-btn');
+
+  validateBtn.addEventListener('click', function () {
+    validateBtn.disabled = true;
+    banner.classList.add('active');
+    setTimeout(function () {
+      banner.classList.remove('active');
+      pill.style.display = 'inline-flex';
+      validateBtn.disabled = false;
+      nextBtn.style.display = 'inline-flex';
+    }, 1200);
+  });
+</script>
+</body>
+</html>

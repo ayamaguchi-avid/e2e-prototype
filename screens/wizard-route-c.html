@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Change MFA Email - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .stage-frame { background:#0A2E57; border:1px solid #122B6A; border-radius:4px; padding:24px; display:flex; align-items:center; justify-content:center; min-height:500px; }
+  .stage-card { background:#fff; border:1px solid #E0E1E1; border-radius:4px; padding:16px 40px; display:flex; flex-direction:column; align-items:center; gap:24px; width:630px; max-width:100%; }
+  .stage-card h2 { font-size:16px; font-weight:600; margin:0; text-align:center; }
+  .stage-body { width:550px; max-width:100%; display:flex; flex-direction:column; gap:16px; }
+  .mfa-steps { margin:0; padding-left:24px; font-size:16px; line-height:24px; color:var(--color-text-default); }
+  .mfa-steps li { margin-bottom:0; }
+  .mfa-steps a.ext-link { display:inline-flex; align-items:center; gap:4px; font-size:16px; }
+  .mfa-steps a.ext-link img { width:16px; height:16px; }
+  .copy-field { display:flex; align-items:center; gap:4px; border:1px solid var(--border-light); border-radius:4px; padding:8px; background:#fff; }
+  .copy-field span { flex:1; font-size:14px; color:var(--color-text-default); }
+  .copy-field img { width:16px; height:16px; opacity:.7; cursor:pointer; }
+  .mfa-checkbox { display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .mfa-checkbox input { width:20px; height:20px; accent-color: var(--color-primary-b60); }
+  .mfa-checkbox span { font-size:14px; color:var(--color-text-default); }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done"><span class="dot"></span><span class="step-label">Bill providers<span class="step-status" style="color:#007F42;">Success</span></span></li>
+        <li class="current"><span class="dot">2</span><span class="step-label">Connect to bill provider<span class="step-status">In progress</span></span></li>
+        <li><span class="dot">3</span><span class="step-label" style="color:var(--color-text-disabled);">Master vendor</span></li>
+        <li><span class="dot">4</span><span class="step-label" style="color:var(--color-text-disabled);">Enroll found accounts</span></li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Connect to PSE&amp;G</h1>
+        <p class="wizard-intro">Configure authentication</p>
+
+        <div class="wizard-body">
+
+          <!-- Stage c1: step 171 (checkbox unchecked, Next disabled) -->
+          <div class="stage active" id="stage-c1">
+            <div class="stage-frame">
+              <div class="stage-card">
+                <h2>Change your MFA email</h2>
+                <div class="stage-body">
+                  <ol class="mfa-steps">
+                    <li>Sign in to <a class="ext-link" href="wizard-step-177d-external.html">PSE&amp;G <img src="../assets/wizard/icon-external-link.svg" alt="" /></a></li>
+                    <li>In the portal, navigate to account or security settings</li>
+                    <li>Set the MFA contact to the avid provided email below.</li>
+                  </ol>
+                  <div class="copy-field">
+                    <span>{{generated}}@mfa.avidbill.com</span>
+                    <img src="../assets/wizard/icon-copy.svg" alt="" />
+                  </div>
+                  <ol class="mfa-steps" start="4">
+                    <li>Once you have confirmed the change click next</li>
+                  </ol>
+                  <label class="mfa-checkbox">
+                    <input type="checkbox" onchange="onConfirmToggle(this)" />
+                    <span>I have updated MFA email to the AvidXchange provided email</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage c2: step 177 (checkbox checked, Next enabled -> route E) -->
+          <div class="stage" id="stage-c2">
+            <div class="stage-frame">
+              <div class="stage-card">
+                <h2>Change your MFA email</h2>
+                <div class="stage-body">
+                  <ol class="mfa-steps">
+                    <li>Sign in to <a class="ext-link" href="wizard-step-177d-external.html">PSE&amp;G <img src="../assets/wizard/icon-external-link.svg" alt="" /></a></li>
+                    <li>In the portal, navigate to account or security settings</li>
+                    <li>Set the MFA contact to the avid provided email below.</li>
+                  </ol>
+                  <div class="copy-field">
+                    <span>{{generated}}@mfa.avidbill.com</span>
+                    <img src="../assets/wizard/icon-copy.svg" alt="" />
+                  </div>
+                  <ol class="mfa-steps" start="4">
+                    <li>Once you have confirmed the change click next</li>
+                  </ol>
+                  <label class="mfa-checkbox">
+                    <input type="checkbox" checked onchange="onConfirmToggle(this)" />
+                    <span>I have updated MFA email to the AvidXchange provided email</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wizard-footer">
+          <a href="home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <div style="display:flex; gap:8px;">
+            <a href="wizard-route-b.html" class="btn btn-secondary">Back</a>
+            <a href="#" id="btn-next" class="btn btn-primary" onclick="return handleNext();">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  // c1 = checkbox unchecked (Next disabled). c2 = checkbox checked (Next enabled -> route E).
+  var STAGE_CONFIG = {
+    c1: { next: null, label: 'Next', disabled: true },
+    c2: { next: { href: 'wizard-route-e.html' }, label: 'Next', disabled: false }
+  };
+
+  function showStage(id) {
+    document.querySelectorAll('.stage').forEach(function (el) { el.classList.remove('active'); });
+    document.getElementById('stage-' + id).classList.add('active');
+    var cfg = STAGE_CONFIG[id];
+    var btn = document.getElementById('btn-next');
+    btn.textContent = cfg.label;
+    btn.dataset.stage = id;
+    if (cfg.disabled) { btn.setAttribute('aria-disabled', 'true'); } else { btn.removeAttribute('aria-disabled'); }
+  }
+
+  function onConfirmToggle(checkbox) {
+    showStage(checkbox.checked ? 'c2' : 'c1');
+  }
+
+  function handleNext() {
+    var id = document.getElementById('btn-next').dataset.stage || 'c1';
+    var cfg = STAGE_CONFIG[id];
+    if (cfg.disabled || !cfg.next) return false;
+    if (cfg.next.href) { window.location.href = cfg.next.href; }
+    return false;
+  }
+
+  showStage('c1');
+</script>
+</body>
+</html>

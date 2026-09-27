@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Connected Bill Retrieval - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="#">Add - on Management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connected Bill Retrieval</span>
+    </div>
+
+    <div class="tabs">
+      <a href="home-empty.html" class="tab active">Connected bill retrieval</a>
+      <span class="tab">Priority Payments <span class="pill-soon">Coming soon</span></span>
+    </div>
+
+    <div class="card manage-card">
+      <div class="manage-nav">
+        <h2>Manage</h2>
+        <a href="home-empty.html" class="nav-item active">Connected providers</a>
+        <a href="home-validated-credentials.html" class="nav-item">Validated credentials</a>
+        <a href="home-credentials-pending.html" class="nav-item">Credentials pending</a>
+        <span class="nav-item">Errors</span>
+        <span class="nav-item">Notifications</span>
+        <span class="nav-item">Requested Providers <span class="pill-soon">Coming soon</span></span>
+      </div>
+      <div class="manage-content">
+        <p class="panel-title">Connected Providers</p>
+        <p class="panel-subtitle text-muted">List of connected bill providers.</p>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div class="search-input-wrap" style="width:270px;">
+            <img src="../assets/icons/search.svg" alt="" />
+            <input type="search" placeholder="Search bill provider" />
+          </div>
+          <a class="btn btn-primary" href="../screens/wizard-search-provider.html">Connect provider</a>
+        </div>
+
+        <div class="empty-state">
+          <h3>No connections yet</h3>
+          <p>After connecting a provider, you'll find it here it here.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Connect to PSE&amp;G - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .mfa-panel { background: #0A2E57; border: 1px solid #122B6A; border-radius: 4px; padding: 24px; display: flex; justify-content: center; }
+  .mfa-card { background: #fff; border: 1px solid #E0E1E1; border-radius: 4px; padding: 16px 40px; width: 100%; max-width: 630px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+  .mfa-card h2 { font-size: 16px; font-weight: 600; margin: 0; }
+  .mfa-email-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .mfa-email-row img { width: 60px; height: 60px; }
+  .mfa-email-row .mfa-email-title { font-size: 32px; font-weight: 600; line-height: 40px; }
+  .mfa-card .mfa-desc-block { text-align: left; width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 4px; }
+  .mfa-card .mfa-desc-block p { margin: 0 0 12px; font-size: 16px; }
+  .mfa-card .field { width: 100%; max-width: 550px; margin-bottom: 0; text-align: left; position: relative; }
+  .email-menu { width: 100%; max-width: 550px; background: #fff; border: 1px solid var(--border-default); border-radius: 4px; margin-top: -1px; box-shadow: 0 4px 10px rgba(0,0,0,.08); }
+  .email-menu .menu-add { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: 14px; color: var(--color-link); font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--border-light); }
+  .email-menu .menu-add:hover { background: #F4F5F6; }
+  .email-menu .menu-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: 14px; color: var(--color-link); font-weight: 600; cursor: pointer; }
+  .email-menu .menu-item:hover { background: #F4F5F6; }
+  .email-menu .menu-verified-label { padding: 8px 12px 0; font-size: 11px; font-weight: 600; color: var(--color-text-placeholder); text-transform: uppercase; }
+  .email-menu .menu-check { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
+  .email-menu .menu-check input { accent-color: var(--color-primary-b60); }
+  .mfa-or { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 550px; }
+  .mfa-or hr { flex: 1; border: none; border-top: 1px solid var(--border-light); margin: 0; }
+  .mfa-method-icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+  .stage-frame { background:#0A2E57; border:1px solid #122B6A; border-radius:4px; padding:24px; display:flex; align-items:center; justify-content:center; min-height:500px; }
+  .stage-card { background:#fff; border:1px solid #E0E1E1; border-radius:4px; padding:16px 40px; display:flex; flex-direction:column; align-items:center; gap:24px; width:630px; max-width:100%; }
+  .stage-card h2 { font-size:16px; font-weight:600; margin:0; text-align:center; }
+  .stage-body { width:550px; max-width:100%; display:flex; flex-direction:column; gap:16px; }
+  .stage-body p { margin:0; font-size:16px; line-height:24px; }
+  .dropdown-field { position:relative; }
+  .dropdown-field input { padding-right:34px; cursor:default; background:#fff; }
+  .dropdown-field .chevron { position:absolute; right:8px; top:50%; transform:translateY(-50%) rotate(90deg); width:16px; height:16px; opacity:.6; }
+  .stage-select-another { text-align:center; }
+
+  .field .field-error { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #AD2B36; margin-top: 4px; }
+  .field input.error { border-color: #AD2B36; background: #FFF0F1; }
+  .mfa-actions { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 550px; }
+  .sim-links { font-size: 12px; color: var(--color-text-placeholder); margin-top: 4px; }
+  .sim-links a { margin: 0 6px; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done"><span class="dot"></span><span class="step-label">Bill providers</span></li>
+        <li class="current"><span class="dot">2</span><span class="step-label">Connect to bill provider<span class="step-status">In progress</span></span></li>
+        <li><span class="dot">3</span><span class="step-label">Master vendor</span></li>
+        <li><span class="dot">4</span><span class="step-label">Enroll accounts</span></li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Connect to PSE&amp;G</h1>
+        <p class="wizard-intro">Configure authentication</p>
+
+        <div class="wizard-body">
+
+          <!-- Stage 1: Validate forwarding email (start) -->
+          <div class="stage active" id="stage-s1">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forward emails to
+                      <span class="tt" tabindex="0" style="width:16px;height:16px;border-radius:50%;background:#C4C8CB;color:#fff;font-size:11px;font-weight:700;justify-content:center;">i
+                        <span class="tt-bubble">This must be an AvidXchange email address that can receive the provider's verification emails.</span>
+                      </span>
+                    </label>
+                    <select>
+                      <option>Select email</option>
+                      <option>groupemail@nextrealty.com</option>
+                    </select>
+                  </div>
+                </div>
+                <a href="#" class="btn btn-tertiary" onclick="showStage('s2'); return false;">Select another method</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 2 (branch): step 182 - select MFA method -->
+          <div class="stage" id="stage-s2">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <p style="font-size:16px;margin:0;">Select the type of authentication used for this credential</p>
+                <div class="alert alert-info" style="background:#FBF1FF; border-color:#680E7E; color:#2F3941;">
+                  For providers with email and text authentication, we require an Avidxchange email as the MFA contact.
+                </div>
+                <label class="selectable-card">
+                  <input type="radio" name="mfa-method" checked />
+                  <img class="mfa-method-icon" src="../assets/wizard/mfa-email.svg" alt="" />
+                  <span><span class="sc-title">Email</span><br /><span class="sc-desc">Receive an email with a passcode to authenticate</span></span>
+                </label>
+                <label class="selectable-card">
+                  <input type="radio" name="mfa-method" />
+                  <img class="mfa-method-icon" src="../assets/wizard/mfa-authenticator-app.svg" alt="" />
+                  <span><span class="sc-title">Authenticator app</span><br /><span class="sc-desc">Use an authenticator app to authenticate</span></span>
+                </label>
+                <label class="selectable-card">
+                  <input type="radio" name="mfa-method" />
+                  <img class="mfa-method-icon" src="../assets/wizard/mfa-sms.svg" alt="" />
+                  <span><span class="sc-title">Text message (SMS)</span><br /><span class="sc-desc">Receive a text message (SMS) with a passcode to authenticate</span></span>
+                </label>
+                <div class="mfa-or"><hr /><span class="text-muted">or</span><hr /></div>
+                <label class="selectable-card" style="margin-bottom:0;">
+                  <input type="radio" name="mfa-method" />
+                  <span class="sc-title">MFA not enabled</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 3: Verify Email 1 A -->
+          <div class="stage" id="stage-s3">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forward emails to
+                      <span class="tt" tabindex="0" style="width:16px;height:16px;border-radius:50%;background:#C4C8CB;color:#fff;font-size:11px;font-weight:700;justify-content:center;">i
+                        <span class="tt-bubble">This must be an AvidXchange email address that can receive the provider's verification emails.</span>
+                      </span>
+                    </label>
+                    <select>
+                      <option>Select email</option>
+                      <option>groupemail@nextrealty.com</option>
+                    </select>
+                  </div>
+                  <div class="email-menu">
+                    <div class="menu-add">+ Add new email</div>
+                    <div class="menu-item" onclick="showStage('s4')">View already verified emails</div>
+                  </div>
+                </div>
+                <a href="#" class="btn btn-tertiary" onclick="showStage('s2'); return false;">Select another method</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 4 (branch): Emails already verified -->
+          <div class="stage" id="stage-s4">
+            <div class="stage-frame">
+              <div class="stage-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" width="60" height="60" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="stage-body">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field" style="margin-bottom:0;">
+                    <label>Forwarding email to
+                      <span class="tt" tabindex="0">
+                        <img class="tt-icon" src="../assets/wizard/icon-info.svg" alt="" />
+                        <span class="tt-bubble">These email addresses were already verified earlier in this session, so they're ready to use for authentication codes.</span>
+                      </span>
+                    </label>
+                    <div class="dropdown-field">
+                      <input type="text" readonly value="management@nextrealty.com, Propery1@nextrealty.com" />
+                      <img class="chevron" src="../assets/icons/chevron-right.svg" alt="" />
+                    </div>
+                  </div>
+                  <div class="stage-select-another">
+                    <a class="btn btn-tertiary" href="#" onclick="showStage('s2'); return false;">Select another method</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 5: Verify Email 1.2 A -->
+          <div class="stage" id="stage-s5">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forwarding email to
+                      <span class="tt" tabindex="0" style="width:16px;height:16px;border-radius:50%;background:#C4C8CB;color:#fff;font-size:11px;font-weight:700;justify-content:center;">i
+                        <span class="tt-bubble">This must be an AvidXchange email address that can receive the provider's verification emails.</span>
+                      </span>
+                    </label>
+                    <select>
+                      <option>Select email</option>
+                      <option>management@nextrealty.com</option>
+                      <option>Property1@nextrealty.com</option>
+                    </select>
+                  </div>
+                  <div class="email-menu">
+                    <div class="menu-add">+ Add new email</div>
+                    <div class="menu-verified-label">Already verified</div>
+                    <label class="menu-check" onclick="showStage('s6')"><input type="checkbox" /> management@nextrealty.com</label>
+                    <label class="menu-check" onclick="showStage('s6')"><input type="checkbox" /> Property1@nextrealty.com</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 6 (branch): Emails already verified 2 -->
+          <div class="stage" id="stage-s6">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forwarding email to
+                      <span class="tt" tabindex="0" style="width:16px;height:16px;border-radius:50%;background:#C4C8CB;color:#fff;font-size:11px;font-weight:700;justify-content:center;">i
+                        <span class="tt-bubble">This must be an AvidXchange email address that can receive the provider's verification emails.</span>
+                      </span>
+                    </label>
+                    <select>
+                      <option>Select email</option>
+                      <option>management@nextrealty.com</option>
+                      <option>Property1@nextrealty.com</option>
+                    </select>
+                  </div>
+                  <div class="email-menu">
+                    <div class="menu-add">+ Add new email</div>
+                    <div class="menu-verified-label">Already verified</div>
+                    <label class="menu-check"><input type="checkbox" checked /> management@nextrealty.com</label>
+                    <label class="menu-check"><input type="checkbox" checked /> Property1@nextrealty.com</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 7: Verify Email 1.2 A (taller variant) -->
+          <div class="stage" id="stage-s7">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Verify email</h2>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forward emails to</label>
+                    <input type="email" id="s7-email" value="groupemail@nextrealty.com" />
+                  </div>
+                </div>
+                <div class="mfa-actions">
+                  <a href="#" class="btn btn-tertiary" onclick="showStage('s9'); return false;">Use a verified email</a>
+                </div>
+                <p class="sim-links">
+                  Prototype shortcuts:
+                  <a href="#" onclick="showStage('s8'); return false;">Simulate invalid email</a> ·
+                  <a href="#" onclick="showStage('s9'); return false;">Simulate already verified</a>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 8 (branch): Invalid email -->
+          <div class="stage" id="stage-s8">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Verify email</h2>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forwarding email</label>
+                    <input type="text" class="error" value="groupemailnextrealty.com" />
+                    <div class="field-error">&#9888; Please enter a valid email address</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 9 (branch, LAST): Emails already verified 3 -->
+          <div class="stage" id="stage-s9">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Verify email</h2>
+                <div class="mfa-desc-block">
+                  <p>This email has already been verified for authentication codes.</p>
+                  <div class="field">
+                    <label>Forwarding email to</label>
+                    <input type="text" readonly value="groupemail@nextrealty.com" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <div style="display:flex; gap:8px;">
+            <a href="../screens/wizard-step-168.html" class="btn btn-secondary">Back</a>
+            <a href="#" id="btn-next" class="btn btn-primary" onclick="return handleNext();">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  // Stage config: each stage's Next behavior. { stage: 'sX' } advances internally,
+  // { href: 'url' } is a real page navigation (only true on the last stage of the route).
+  var STAGE_CONFIG = {
+    s1: { next: { stage: 's3' },  label: 'Next' },
+    s2: { next: { stage: 's1' },  label: 'Back to email setup' },
+    s3: { next: { stage: 's5' },  label: 'Next' },
+    s4: { next: { stage: 's5' },  label: 'Continue' },
+    s5: { next: { stage: 's7' },  label: 'Next' },
+    s6: { next: { stage: 's7' },  label: 'Continue' },
+    s7: { next: { href: 'wizard-route-b.html' }, label: 'Next' },
+    s8: { next: { stage: 's7' },  label: 'Try again' },
+    s9: { next: { href: 'wizard-route-b.html' }, label: 'Next' }
+  };
+
+  function showStage(id) {
+    document.querySelectorAll('.stage').forEach(function (el) { el.classList.remove('active'); });
+    document.getElementById('stage-' + id).classList.add('active');
+    var cfg = STAGE_CONFIG[id];
+    document.getElementById('btn-next').textContent = cfg.label;
+    document.getElementById('btn-next').dataset.stage = id;
+  }
+
+  function handleNext() {
+    var id = document.getElementById('btn-next').dataset.stage || 's1';
+    var cfg = STAGE_CONFIG[id];
+    if (cfg.next.href) {
+      window.location.href = cfg.next.href;
+    } else {
+      showStage(cfg.next.stage);
+    }
+    return false;
+  }
+
+  showStage('s1');
+</script>
+</body>
+</html>

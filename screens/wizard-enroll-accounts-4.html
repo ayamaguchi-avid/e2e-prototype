@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Link a vendor account - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .step-tracker li.done .step-status { color: #007F42; }
+  .enroll-search { max-width: 360px; margin-bottom: 16px; }
+  .btn-sm { height: 28px; padding: 0 12px; font-size: 13px; }
+  table.data-table td.link-cell { text-align: right; }
+
+  .wizard-main { position: relative; }
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.41);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 24px;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 4px;
+    padding: 24px;
+    width: 100%;
+    max-width: 760px;
+    max-height: 100%;
+    overflow: auto;
+  }
+  .modal-card h2 { font-size: 24px; font-weight: 600; margin: 0 0 16px; }
+  .modal-card ol { margin: 0 0 20px; padding-left: 20px; font-size: 16px; line-height: 24px; }
+  .info-row { display: flex; gap: 32px; margin: 16px 0 20px; }
+  .info-row .info-label { font-size: 12px; color: var(--color-text-placeholder); margin: 0 0 2px; }
+  .info-row .info-value { font-size: 14px; font-weight: 500; margin: 0; }
+  .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  table.vendor-select-table input[type=radio] { accent-color: var(--color-primary-b60); }
+  .field-with-tt { display: flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done"><span class="dot"></span><span class="step-label">Bill providers<span class="step-status">Success</span></span></li>
+        <li class="done"><span class="dot"></span><span class="step-label">Connect to bill provider<span class="step-status">Success</span></span></li>
+        <li class="done"><span class="dot"></span><span class="step-label">Master vendor<span class="step-status">Success</span></span></li>
+        <li class="current"><span class="dot">4</span><span class="step-label">Enroll accounts<span class="step-status">In progress</span></span></li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Enroll accounts</h1>
+        <p class="wizard-intro">Link a vendor account to a bill provider account you want to enroll. Press Enroll to complete the setup process.</p>
+
+        <div class="wizard-body" style="opacity:.5; pointer-events:none;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Provider account number</th><th>Account type</th><th>Credential</th><th>Vendor account #</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr><td>01956356</td><td>Summary</td><td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td><td>&nbsp;</td><td class="link-cell"><button class="btn btn-primary btn-sm">Link</button></td></tr>
+              <tr><td>82359673</td><td>Sub account</td><td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td><td>&nbsp;</td><td class="link-cell"><button class="btn btn-primary btn-sm">Link</button></td></tr>
+              <tr><td>27598693</td><td>Sub account</td><td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td><td>&nbsp;</td><td class="link-cell"><button class="btn btn-primary btn-sm">Link</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal-overlay">
+          <div class="modal-card">
+            <h2>Link vendor account</h2>
+            <ol>
+              <li>Select the billing cycle for this account.</li>
+              <li>Select the <strong>account #</strong> that matches the <strong>provider account number</strong>.</li>
+            </ol>
+
+            <div class="field" style="max-width:280px; margin-bottom:0;">
+              <span class="field-with-tt">
+                <label style="margin:0;">Billing cycle</label>
+                <span class="tt" tabindex="0">
+                  <span class="tt-icon" aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; border:1.5px solid currentColor; font-size:10px; font-weight:700;">i</span>
+                  <span class="tt-bubble">This account number comes from the bill provider. Match it to your Vendor Account # below.</span>
+                </span>
+              </span>
+              <select>
+                <option>Monthly</option>
+                <option>Quarterly</option>
+                <option>Annually</option>
+              </select>
+            </div>
+
+            <div class="info-row">
+              <div>
+                <p class="info-label">Provider account number</p>
+                <p class="info-value">01956356</p>
+              </div>
+              <div>
+                <p class="info-label">Credential</p>
+                <p class="info-value">agrater@nextrealty.com</p>
+              </div>
+              <div>
+                <p class="info-label">Bill Provider</p>
+                <p class="info-value">PSE&amp;G</p>
+              </div>
+            </div>
+
+            <table class="data-table vendor-select-table">
+              <thead>
+                <tr><th></th><th>Account #</th><th>Vendor account name</th><th>Remittance address</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><input type="radio" name="vendor-account" /></td><td>01956356</td><td><a href="#">PSEG Newark</a></td><td>78 Oak Street, Newark, NJ 07102</td></tr>
+                <tr><td><input type="radio" name="vendor-account" /></td><td>82359673</td><td><a href="#">PSEG Jersey</a></td><td>45 Maple Lane, Trenton, NJ 08618</td></tr>
+                <tr><td><input type="radio" name="vendor-account" /></td><td>27598693</td><td><a href="#">PSEG Downtown</a></td><td>23 Pine Avenue, Camden, NJ 08103</td></tr>
+                <tr><td><input type="radio" name="vendor-account" /></td><td>23452346</td><td><a href="#">PSEG Boardwalk</a></td><td>56 Cedar Drive, Jersey City, NJ 07305</td></tr>
+                <tr><td><input type="radio" name="vendor-account" /></td><td>46785634</td><td><a href="#">PSEG Atlantic Hotel</a></td><td>89 Birch Boulevard, Hoboken, NJ 07030</td></tr>
+                <tr><td><input type="radio" name="vendor-account" /></td><td>95686425</td><td><a href="#">PSEG Hudson View</a></td><td>34 Elm Road, Paterson, NJ 07501</td></tr>
+              </tbody>
+            </table>
+
+            <div class="modal-footer">
+              <a class="btn btn-tertiary" href="../screens/wizard-enroll-accounts-3.html">Cancel</a>
+              <button class="btn btn-primary" id="linkBtn" disabled>Link</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  (function () {
+    var linkBtn = document.getElementById('linkBtn');
+    document.querySelectorAll('input[name="vendor-account"]').forEach(function (r) {
+      r.addEventListener('change', function () { linkBtn.disabled = false; });
+    });
+    linkBtn.addEventListener('click', function () {
+      if (!linkBtn.disabled) window.location.href = '../screens/wizard-enroll-accounts-7.html';
+    });
+  })();
+</script>
+</body>
+</html>

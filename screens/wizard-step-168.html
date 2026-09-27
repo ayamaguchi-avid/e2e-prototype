@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Connect to PSE&amp;G - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .mfa-panel { background: #0A2E57; border: 1px solid #122B6A; border-radius: 4px; padding: 24px; display: flex; justify-content: center; }
+  .mfa-card { background: #fff; border: 1px solid #E0E1E1; border-radius: 4px; padding: 16px 40px; width: 100%; max-width: 496px; display: flex; flex-direction: column; gap: 24px; }
+  .mfa-card h2 { text-align: center; font-size: 16px; font-weight: 600; margin: 0; }
+  .mfa-card .mfa-desc { font-size: 16px; margin: 0; }
+  .mfa-or { display: flex; align-items: center; gap: 8px; }
+  .mfa-or hr { flex: 1; border: none; border-top: 1px solid var(--border-light); margin: 0; }
+  .mfa-method-icon { width: 24px; height: 24px; flex-shrink: 0; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done">
+          <span class="dot"></span>
+          <span class="step-label">Bill providers</span>
+        </li>
+        <li class="current">
+          <span class="dot">2</span>
+          <span class="step-label">Connect to bill provider<span class="step-status">In progress</span></span>
+        </li>
+        <li>
+          <span class="dot">3</span>
+          <span class="step-label">Master vendor</span>
+        </li>
+        <li>
+          <span class="dot">4</span>
+          <span class="step-label">Enroll accounts</span>
+        </li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Connect to PSE&amp;G</h1>
+        <p class="wizard-intro">Select your authentication</p>
+
+        <div class="wizard-body">
+          <div class="mfa-panel">
+            <div class="mfa-card">
+              <h2>Multi factor authentication</h2>
+              <p class="mfa-desc">Select the type of authentication used for this credential</p>
+
+              <div class="alert alert-info" style="background:#FBF1FF; border-color:#680E7E; color:#2F3941;">
+                For providers with email and text authentication, we require an Avidxchange email as the MFA contact.
+              </div>
+
+              <label class="selectable-card">
+                <input type="radio" name="mfa-method" checked />
+                <img class="mfa-method-icon" src="../assets/wizard/mfa-email.svg" alt="" />
+                <span>
+                  <span class="sc-title">Email</span><br />
+                  <span class="sc-desc">Receive an email with a passcode to authenticate</span>
+                </span>
+              </label>
+
+              <label class="selectable-card">
+                <input type="radio" name="mfa-method" />
+                <img class="mfa-method-icon" src="../assets/wizard/mfa-authenticator-app.svg" alt="" />
+                <span>
+                  <span class="sc-title">Authenticator app</span><br />
+                  <span class="sc-desc">Use an authenticator app to authenticate</span>
+                </span>
+              </label>
+
+              <label class="selectable-card">
+                <input type="radio" name="mfa-method" />
+                <img class="mfa-method-icon" src="../assets/wizard/mfa-sms.svg" alt="" />
+                <span>
+                  <span class="sc-title">Text message (SMS)</span><br />
+                  <span class="sc-desc">Receive a text message (SMS) with a passcode to authenticate</span>
+                </span>
+              </label>
+
+              <div class="mfa-or"><hr /><span class="text-muted">or</span><hr /></div>
+
+              <label class="selectable-card" style="margin-bottom:0;">
+                <input type="radio" name="mfa-method" />
+                <span class="sc-title">MFA not enabled</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <div style="display:flex; gap:8px;">
+            <a href="wizard-search-provider.html" class="btn btn-secondary">Back</a>
+            <a href="wizard-route-a.html" class="btn btn-primary">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>
