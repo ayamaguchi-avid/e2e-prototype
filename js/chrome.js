@@ -5,9 +5,18 @@
 (function () {
   var ICON = 'icons/';
 
+  // Resolve everything relative to THIS script's own URL, so it works
+  // whether the current page is the project root (index.html) or one
+  // level down (screens/*.html) - and regardless of what subpath the
+  // whole site is hosted under (e.g. a GitHub Pages project site).
+  var scriptEl = document.currentScript || (function () {
+    var scripts = document.getElementsByTagName('script');
+    return scripts[scripts.length - 1];
+  })();
+  var ROOT = scriptEl.src.replace(/js\/chrome\.js(?:\?.*)?$/, '');
+
   function assetPath(name) {
-    // screens/*.html live one level below the site root
-    return '../assets/' + ICON + name;
+    return ROOT + 'assets/' + ICON + name;
   }
 
   var HEADER_HTML =
@@ -24,10 +33,10 @@
     '</header>';
 
   var NAV_ITEMS = [
-    { key: 'home', label: 'Home', icon: 'home.svg', href: '../screens/home-connected.html' },
+    { key: 'home', label: 'Home', icon: 'home.svg', href: ROOT + 'screens/home-connected.html' },
     { key: 'my-profile', label: 'My profile', icon: 'account-box.svg', href: null },
     { key: 'batching', label: 'Batching', icon: 'stacks.svg', href: null },
-    { key: 'add-on-management', label: 'Add-on management', icon: 'store.svg', href: '../screens/home-connected.html' },
+    { key: 'add-on-management', label: 'Add-on management', icon: 'store.svg', href: ROOT + 'screens/home-connected.html' },
     { key: 'match-policies', label: 'Match policies', icon: 'folder-match.svg', href: null },
     { key: 'contracts', label: 'Contracts', icon: 'folder-managed.svg', href: null },
     { key: 'entities', label: 'Entities', icon: 'corporate-fare.svg', href: null },
