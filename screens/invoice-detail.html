@@ -92,7 +92,7 @@
           <button class="active">Header</button>
           <button>Associated Invoices</button>
         </div>
-        <button class="btn btn-secondary" onclick="return false;">Save</button>
+        <button class="btn btn-secondary" id="saveBtn">Save</button>
         <button class="btn btn-secondary" onclick="return false;">Create Report</button>
         <button class="btn btn-primary" id="submitBtn">Submit</button>
         <button class="btn btn-secondary" onclick="return false;">More</button>
@@ -232,6 +232,25 @@
   </div>
 </div>
 
+<!-- Approval confirmation (Figma frames "21.1"/"22.1") — shown after Save on
+     an invoice that was flagged (no-stp / anomaly scenarios) and reached
+     from the Invoice Home "Time Sensitive" tab's Approve Invoice action.
+     "Got it!" returns to invoice-home.html's Time Sensitive tab with that
+     row marked approved. -->
+<div class="modal-overlay" id="approvalConfirmOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Invoice approved</h3>
+    </div>
+    <div class="modal-body">
+      <p id="approvalConfirmBody">This invoice has been approved and will move to the payment queue.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="approvalConfirmGotIt">Got it!</button>
+    </div>
+  </div>
+</div>
+
 <script src="../js/chrome-invoice.js"></script>
 <script>
   (function () {
@@ -256,6 +275,13 @@
     var params = new URLSearchParams(location.search);
     var scenario = params.get('scenario') || 'fine';
     var data = SCENARIOS[scenario] || SCENARIOS.fine;
+    // "return" tells this page where Save/back should go once the user is
+    // done here. Set by invoice-home.html's Time Sensitive tab: "row1"/"row3"
+    // for the two Approve Invoice flows (frames 21/22 -> 21.1/22.1 -> back to
+    // the tab with that row updated), "20" for the plain View Invoice flow
+    // (frame 20.1 -> back to 20, no approval to record).
+    var returnTo = params.get('return');
+    var APPROVAL_ROWS = { row1: 1, row3: 3 };
 
     var iconSuccess = '<svg class="a-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.5 2.5 2.5L16 9"/></svg>';
     var iconWarning = '<svg class="a-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.5v5.5M12 16v.1"/></svg>';
@@ -307,6 +333,30 @@
       closeModal();
     });
     modalToggle.addEventListener('change', function () { toggle.checked = modalToggle.checked; });
+
+    // Save (standing in for "Save" or navigating back) — where it goes
+    // depends on "return". A flagged invoice reached via Approve Invoice
+    // shows the "Got it!" confirmation first; the plain View Invoice flow
+    // just returns to the Time Sensitive tab directly.
+    var approvalOverlay = document.getElementById('approvalConfirmOverlay');
+    var approvalBody = document.getElementById('approvalConfirmBody');
+    var approvalGotIt = document.getElementById('approvalConfirmGotIt');
+    var approvalRowNum = returnTo ? APPROVAL_ROWS[returnTo] : null;
+
+    document.getElementById('saveBtn').addEventListener('click', function () {
+      if (!returnTo) return; // no return target on this page load; no-op like the other stub buttons
+      if (approvalRowNum) {
+        approvalBody.textContent = 'This invoice has been approved despite the "' + data.title + '" flag. It will move to the payment queue.';
+        approvalOverlay.classList.add('open');
+      } else {
+        window.location.href = 'invoice-home.html#time-sensitive';
+      }
+    });
+
+    approvalGotIt.addEventListener('click', function () {
+      if (approvalRowNum) localStorage.setItem('tsRow' + approvalRowNum + 'Approved', '1');
+      window.location.href = 'invoice-home.html#time-sensitive';
+    });
   })();
 </script>
 </body>

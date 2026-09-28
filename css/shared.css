@@ -19,6 +19,7 @@
   --border-default: #C4C8CB;
   --border-divider: #DDDFE1;
   --border-light: #E2E2E2;
+  --input-border-default: #71828E; /* Lydia "Input field" component's own border token - darker than --border-default */
 
   --radius-2: 4px;
   --space-4: 4px;
@@ -205,17 +206,33 @@ button {
 .field label { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .field .optional { font-weight: 400; color: var(--color-text-placeholder); }
 .field .help-text { font-size: 13px; color: var(--color-text-placeholder); }
-.field input[type=text], .field input[type=search], .field input[type=email], .field select {
+
+/* Lydia "Input field" component, applied globally (not just inside .field)
+   so every text/search/password input and <select> in the prototype -
+   including search bars that sit outside a .field wrapper - matches the
+   real component's border color/radius/padding exactly, not the browser
+   default. Verified against Figma nodes 7002:19187 (search input) and
+   7002:18529 (password input): border #71828E, radius 4px, 38px tall,
+   padding 4px 8px. */
+input[type=text], input[type=search], input[type=email], input[type=password], select, textarea {
   height: 38px;
-  border: 1px solid var(--border-default);
-  border-radius: 4px;
-  padding: 0 10px;
+  background: var(--bg-surface-default);
+  border: 1px solid var(--input-border-default);
+  border-radius: var(--radius-2);
+  padding: 4px 8px;
   font-size: 14px;
   font-family: inherit;
   color: var(--color-text-default);
   width: 100%;
+  box-sizing: border-box;
 }
-.field input::placeholder { color: var(--color-text-placeholder); font-style: italic; }
+textarea { height: auto; min-height: 76px; }
+input[type=text]:focus, input[type=search]:focus, input[type=email]:focus, input[type=password]:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-b60);
+  box-shadow: 0 0 0 3px rgba(30, 133, 255, 0.15);
+}
+input::placeholder, textarea::placeholder { color: var(--color-text-placeholder); font-style: italic; }
 .search-input-wrap { position: relative; }
 .search-input-wrap img { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; }
 .search-input-wrap input { padding-left: 34px; }

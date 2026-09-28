@@ -27,6 +27,47 @@
   .chip-auto { display:inline-block; font-size:10px; font-weight:600; color:var(--color-link); background:#EAF3FF; border:1px solid #B9D8FF; border-radius:10px; padding:1px 8px; }
 
   .ph-footer { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid var(--border-default); font-size:12px; color:var(--color-text-placeholder); }
+
+  /* ---- Frame 23 -> 24: click a batch row to reveal its payment detail ----
+     In-page state only (no navigation): toggling .selected on the clicked
+     row and .open on the detail panel, per the .stage/.stage.active pattern
+     documented in shared.css. Reproduced from Figma node 7056:41540 ("24"),
+     simplified per spec to: status tags, the invoice-level Payment Detail
+     table, Download link, and a History section. */
+  .ph-split { display:flex; align-items:flex-start; gap:16px; }
+  .ph-split .ph-table-wrap { flex: 1 1 auto; min-width:0; transition: flex-basis .15s ease; }
+  .ph-split.has-selection .ph-table-wrap { flex: 0 0 420px; max-width:420px; }
+
+  table.ph-table tbody tr { cursor:pointer; }
+  table.ph-table tbody tr:hover td { background:#F4F9FE; }
+  table.ph-table tbody tr.selected td { background:#0681CB; color:#fff; }
+  table.ph-table tbody tr.selected .chip-auto { background:#fff; color:#0681CB; border-color:#fff; }
+
+  .detail-panel { display:none; flex:1 1 auto; min-width:0; background:#fff; border:1px solid var(--border-light); align-self:stretch; }
+  .detail-panel.open { display:block; }
+
+  .dp-toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:12px 16px; border-bottom:1px solid var(--border-light); }
+  .dp-tag { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:4px 10px; border-radius:4px; border:1px solid transparent; white-space:nowrap; }
+  .dp-tag-sensitive { background:#fff; border-color:#C77DD9; color:#8A2BA8; }
+  .dp-tag-success { background:#E9F7EF; border-color:#B7E4C7; color:#1E6B3C; }
+  .dp-tag-success::before { content:"\2713"; }
+  .dp-tag-info { background:#FBF1FF; border-color:#680E7E; color:#680E7E; }
+  .dp-tag-info::before { content:"\24D8"; }
+
+  .dp-body { padding:16px; }
+  .dp-section-title { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--color-text-default); margin:0 0 8px; cursor:pointer; user-select:none; }
+  .dp-section-title .chev { display:inline-block; transition: transform .12s ease; font-size:10px; }
+  .dp-section-title.collapsed .chev { transform: rotate(-90deg); }
+  .dp-section-body { margin-bottom:20px; }
+  .dp-section-body.collapsed { display:none; }
+
+  table.dp-table { width:100%; border-collapse:collapse; font-size:12px; border:1px solid var(--border-light); }
+  table.dp-table th, table.dp-table td { text-align:left; padding:8px 10px; border-top:1px solid var(--border-default); border-right:1px solid var(--border-light); white-space:nowrap; }
+  table.dp-table th { background:var(--bg-surface-secondary); font-weight:700; }
+  table.dp-table th:last-child, table.dp-table td:last-child { border-right:none; }
+
+  .dp-download { color:#5F5DD9; font-weight:700; }
+  .dp-history-empty { font-size:12px; color:var(--color-text-placeholder); margin:0; }
 </style>
 </head>
 <body data-app="pay" data-active-nav="pay">
@@ -56,44 +97,152 @@
       <select><option>Last 30 Days</option></select>
     </div>
 
-    <div class="ph-table-wrap">
-      <table class="ph-table">
-        <thead>
-          <tr>
-            <th>Batch ID</th>
-            <th>Payment Count</th>
-            <th>Created By</th>
-            <th>Total</th>
-            <th>Date</th>
-            <th>TSP</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>2025-12-02T12:22:21.674Z</td><td>1</td><td>avidapi@avidavidxchange.com.com</td><td>$1,101.25</td><td>12/02/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Processing</td></tr>
-          <tr><td>2025-11-24T12:22:21.674Z</td><td>2</td><td>avidapi@avidavidxchange.com.com</td><td>$1,272.86</td><td>11/24/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Processing</td></tr>
-          <tr><td>2025-11-24T11:00:00.000Z</td><td>7</td><td>contact@corporate.com</td><td>$80,000.00</td><td>11/24/2025</td><td></td><td>Closed</td></tr>
-          <tr><td>2025-11-26T13:15:15.234Z</td><td>9</td><td>sales@marketplace.com</td><td>$90,000.00</td><td>11/26/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
-          <tr><td>2025-11-28T10:30:30.987Z</td><td>11</td><td>admin@platform.com</td><td>$65,000.00</td><td>11/28/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
-          <tr><td>2025-11-29T12:45:00.654Z</td><td>12</td><td>user@application.com</td><td>$55,000.00</td><td>11/29/2025</td><td></td><td>Open</td></tr>
-          <tr><td>2025-11-30T14:00:00.567Z</td><td>13</td><td>contact@solution.com</td><td>$75,000.00</td><td>11/30/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
-          <tr><td>2025-12-01T09:45:45.789Z</td><td>14</td><td>support@assistance.com</td><td>$60,000.00</td><td>12/01/2025</td><td></td><td>Pending</td></tr>
-          <tr><td>2025-12-02T16:20:20.345Z</td><td>15</td><td>info@service.com</td><td>$85,000.00</td><td>12/02/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
-          <tr><td>2025-12-03T11:30:11.222Z</td><td>16</td><td>hello@userportal.com</td><td>$68,000.00</td><td>12/03/2025</td><td></td><td>Open</td></tr>
-          <tr><td>2025-12-04T13:55:30.456Z</td><td>17</td><td>client@webapp.com</td><td>$79,000.00</td><td>12/04/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
-          <tr><td>2025-12-05T14:30:00.123Z</td><td>18</td><td>sales@ecommerce.com</td><td>$52,000.00</td><td>12/05/2025</td><td></td><td>Pending</td></tr>
-          <tr><td>2025-12-06T10:10:10.109Z</td><td>19</td><td>contacts@startup.com</td><td>$65,000.00</td><td>12/06/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
-          <tr><td>2025-12-07T15:15:15.333Z</td><td>20</td><td>support@tech.com</td><td>$90,000.00</td><td>12/07/2025</td><td></td><td>Open</td></tr>
-        </tbody>
-      </table>
-      <div class="ph-footer">
-        <span>50 items per page</span>
-        <span>1 - 13 of 13</span>
+    <div class="ph-split" id="phSplit">
+      <div class="ph-table-wrap">
+        <table class="ph-table">
+          <thead>
+            <tr>
+              <th>Batch ID</th>
+              <th>Payment Count</th>
+              <th>Created By</th>
+              <th>Total</th>
+              <th>Date</th>
+              <th>TSP</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="phTableBody">
+            <tr onclick="selectBatch(this)"><td>2025-12-02T12:22:21.674Z</td><td>1</td><td>avidapi@avidavidxchange.com.com</td><td>$1,101.25</td><td>12/02/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Processing</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-11-24T12:22:21.674Z</td><td>2</td><td>avidapi@avidavidxchange.com.com</td><td>$1,272.86</td><td>11/24/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Processing</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-11-24T11:00:00.000Z</td><td>7</td><td>contact@corporate.com</td><td>$80,000.00</td><td>11/24/2025</td><td></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-11-26T13:15:15.234Z</td><td>9</td><td>sales@marketplace.com</td><td>$90,000.00</td><td>11/26/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-11-28T10:30:30.987Z</td><td>11</td><td>admin@platform.com</td><td>$65,000.00</td><td>11/28/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-11-29T12:45:00.654Z</td><td>12</td><td>user@application.com</td><td>$55,000.00</td><td>11/29/2025</td><td></td><td>Open</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-11-30T14:00:00.567Z</td><td>13</td><td>contact@solution.com</td><td>$75,000.00</td><td>11/30/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-01T09:45:45.789Z</td><td>14</td><td>support@assistance.com</td><td>$60,000.00</td><td>12/01/2025</td><td></td><td>Pending</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-02T16:20:20.345Z</td><td>15</td><td>info@service.com</td><td>$85,000.00</td><td>12/02/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-03T11:30:11.222Z</td><td>16</td><td>hello@userportal.com</td><td>$68,000.00</td><td>12/03/2025</td><td></td><td>Open</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-04T13:55:30.456Z</td><td>17</td><td>client@webapp.com</td><td>$79,000.00</td><td>12/04/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-05T14:30:00.123Z</td><td>18</td><td>sales@ecommerce.com</td><td>$52,000.00</td><td>12/05/2025</td><td></td><td>Pending</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-06T10:10:10.109Z</td><td>19</td><td>contacts@startup.com</td><td>$65,000.00</td><td>12/06/2025</td><td><span class="chip-auto">Auto Initiated</span></td><td>Closed</td></tr>
+            <tr onclick="selectBatch(this)"><td>2025-12-07T15:15:15.333Z</td><td>20</td><td>support@tech.com</td><td>$90,000.00</td><td>12/07/2025</td><td></td><td>Open</td></tr>
+          </tbody>
+        </table>
+        <div class="ph-footer">
+          <span>50 items per page</span>
+          <span>1 - 13 of 13</span>
+        </div>
+      </div>
+
+      <!-- Frame 24 (node 7056:41540): payment detail for the selected batch.
+           Hidden until a row is clicked; content is populated by selectBatch(). -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="dp-toolbar" id="dpTags"></div>
+        <div class="dp-body">
+          <div class="dp-section-title" onclick="toggleSection('dpPaymentDetail')"><span class="chev">&#9662;</span> Payment Detail</div>
+          <div class="dp-section-body" id="dpPaymentDetail">
+            <table class="dp-table">
+              <thead>
+                <tr>
+                  <th>Invoice Number</th>
+                  <th>Invoice Date</th>
+                  <th>Invoice Amount</th>
+                  <th>Discount Amount</th>
+                  <th>Payment Status</th>
+                  <th>Payment ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="dpRow"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+            <div class="mt-24"><a href="#" class="dp-download" onclick="return false;">Download proof of payment</a></div>
+          </div>
+          <div class="dp-section-title collapsed" onclick="toggleSection('dpHistory')"><span class="chev">&#9662;</span> History</div>
+          <div class="dp-section-body collapsed" id="dpHistory">
+            <p class="dp-history-empty">No history events recorded for this batch yet.</p>
+          </div>
+        </div>
       </div>
     </div>
 
   </main>
 </div>
 <script src="../js/chrome-invoice.js"></script>
+<script>
+  // Frame 23 -> 24: clicking a Batches row selects it and reveals its
+  // payment detail panel, in-page (no navigation). Per-row invoice-level
+  // fields below stand in for the batch's real payment breakdown so the
+  // panel content plausibly varies row to row, matching Figma node
+  // 7056:41540 ("24") - Invoice Number / Invoice Date / Invoice Amount /
+  // Discount Amount / Payment Status / Payment ID, plus the Download link
+  // and History section.
+  var BATCH_DETAILS = [
+    { invoiceNumber: 'CD_001204593', invoiceDate: '12/02/2025', discountAmount: '$0.00',    paymentId: '187277078' },
+    { invoiceNumber: 'CD_001204601', invoiceDate: '11/24/2025', discountAmount: '$0.00',    paymentId: '187277092' },
+    { invoiceNumber: 'CD_001198342', invoiceDate: '11/20/2025', discountAmount: '$400.00',  paymentId: '187265114' },
+    { invoiceNumber: 'CD_001199981', invoiceDate: '11/23/2025', discountAmount: '$0.00',    paymentId: '187268850' },
+    { invoiceNumber: 'CD_001200456', invoiceDate: '11/26/2025', discountAmount: '$650.00',  paymentId: '187271203' },
+    { invoiceNumber: 'CD_001201122', invoiceDate: '11/28/2025', discountAmount: '$0.00',    paymentId: '187273319' },
+    { invoiceNumber: 'CD_001201897', invoiceDate: '11/29/2025', discountAmount: '$0.00',    paymentId: '187274502' },
+    { invoiceNumber: 'CD_001202340', invoiceDate: '11/30/2025', discountAmount: '$0.00',    paymentId: '187275140' },
+    { invoiceNumber: 'CD_001202901', invoiceDate: '12/01/2025', discountAmount: '$850.00',  paymentId: '187276018' },
+    { invoiceNumber: 'CD_001203355', invoiceDate: '12/02/2025', discountAmount: '$0.00',    paymentId: '187276645' },
+    { invoiceNumber: 'CD_001203802', invoiceDate: '12/03/2025', discountAmount: '$0.00',    paymentId: '187277208' },
+    { invoiceNumber: 'CD_001204118', invoiceDate: '12/04/2025', discountAmount: '$0.00',    paymentId: '187277510' },
+    { invoiceNumber: 'CD_001204901', invoiceDate: '12/05/2025', discountAmount: '$0.00',    paymentId: '187277940' }
+  ];
+
+  var STATUS_TO_PAYMENT_STATUS = {
+    'Processing': 'Pending',
+    'Closed': 'Cleared',
+    'Open': 'Open',
+    'Pending': 'Pending'
+  };
+
+  var TAG_HTML = {
+    sensitive: '<span class="dp-tag dp-tag-sensitive">Time Sensitive</span>',
+    paidOnTime: '<span class="dp-tag dp-tag-success">Paid on time</span>',
+    noLateFees: '<span class="dp-tag dp-tag-success">No late fees</span>',
+    adjusted: '<span class="dp-tag dp-tag-info">Adjusted Amount</span>'
+  };
+
+  function tagsForStatus(status) {
+    if (status === 'Closed') return TAG_HTML.paidOnTime + TAG_HTML.noLateFees;
+    if (status === 'Open' || status === 'Pending') return TAG_HTML.sensitive + TAG_HTML.adjusted;
+    return TAG_HTML.sensitive; // Processing
+  }
+
+  function selectBatch(row) {
+    var rows = Array.prototype.slice.call(document.getElementById('phTableBody').rows);
+    rows.forEach(function (r) { r.classList.remove('selected'); });
+    row.classList.add('selected');
+
+    var idx = rows.indexOf(row);
+    var detail = BATCH_DETAILS[idx] || BATCH_DETAILS[0];
+    var total = row.cells[3].textContent.trim();
+    var status = row.cells[6].textContent.trim();
+
+    document.getElementById('dpTags').innerHTML = tagsForStatus(status);
+
+    var dpRow = document.getElementById('dpRow');
+    dpRow.cells[0].textContent = detail.invoiceNumber;
+    dpRow.cells[1].textContent = detail.invoiceDate;
+    dpRow.cells[2].textContent = total;
+    dpRow.cells[3].textContent = detail.discountAmount;
+    dpRow.cells[4].textContent = STATUS_TO_PAYMENT_STATUS[status] || status;
+    dpRow.cells[5].textContent = detail.paymentId;
+
+    document.getElementById('detailPanel').classList.add('open');
+    document.getElementById('phSplit').classList.add('has-selection');
+  }
+
+  function toggleSection(bodyId) {
+    var body = document.getElementById(bodyId);
+    var title = body.previousElementSibling;
+    body.classList.toggle('collapsed');
+    title.classList.toggle('collapsed');
+  }
+</script>
 </body>
 </html>

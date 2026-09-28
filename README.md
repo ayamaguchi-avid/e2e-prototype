@@ -7,16 +7,17 @@ system already linked to that file.
 **Live:** https://ayamaguchi-avid.github.io/e2e-prototype/
 **Source:** https://github.com/ayamaguchi-avid/e2e-prototype
 
-17 HTML files covering three flows:
+17 HTML files covering two connected flows:
 
 1. **Connected Bill Retrieval (CBR)** — Home + the "Connect provider" wizard (search for a
    provider → authentication method → forward/verify an email → PSE&G login → master vendor
    selection → enroll accounts), looping back to the now-connected Home.
-2. **Priority Payments (PP) enrollment** — a 5-stage "Set Up Payments" wizard entered from
-   Home's Priority Payments tab.
-3. **Invoice & Pay** — a separate product area (AvidInvoice / AvidPay) with its own header and
-   icon-only sidenav: an invoice queue, three example review scenarios, and the AvidPay batches
-   screen.
+2. **Priority Payments enrollment → invoice approval → AvidPay** — a 5-stage "Set Up Payments"
+   wizard entered from Home's Priority Payments tab, which now flows straight into approving that
+   provider's time-sensitive invoices (in a separate product area, AvidInvoice/AvidPay, with its
+   own header and icon-only sidenav) and on into viewing the resulting payment in AvidPay. These
+   used to be two disconnected flows; the Figma file now numbers them as one continuous sequence
+   (frames 9 through 24).
 
 ## Running it locally
 
@@ -135,6 +136,55 @@ second screen no longer exist in Figma at all. This prototype's `wizard-route-*.
   else rather than more correct. Worth a dedicated cross-file design-token pass if exact Lydia
   fidelity matters more than internal consistency.
 
+### Second round on 2026-09-28: Lydia input-field fix + Frames 16-24 (invoice approval)
+
+**A real, sitewide bug found and fixed**: `shared.css`'s input styling used the wrong border
+color (`#C4C8CB`, a generic border token) instead of Lydia's actual `Input field` component
+border (`#71828E`) — verified directly against Figma's Lydia Components library. Worse, several
+search boxes across the app (e.g. Home's "Search bill provider") weren't matched by the old CSS
+selector at all and were silently rendering as unstyled browser-default inputs. Fixed by making
+the rule global (`input[type=...], select, textarea`, not just inside `.field`) with the correct
+border/padding — this corrects every input on all 17 screens in one change. **There is no way to
+"link" Lydia's real components into this static site**: Lydia's actual code lives in
+AvidXchange's private Azure DevOps repo, not a public package registry, so matching its Figma
+tokens by hand (as this prototype does throughout) is the only option for a no-build static site.
+
+**Frame 11** (`pp-confirm-address.html`): clicking the first row's checkbox in the "Apply to all
+Vendor Accounts" table now checks every other row too, per explicit instruction.
+
+**Frames 16-24**: the designer connected what used to be two separate, disconnected flows (PP
+enrollment, and a 3-screen Invoice & Pay demo) into one continuous sequence. No new files —
+existing screens got new content/behavior:
+
+- `pp-review-enroll.html` (Frame 16 — confirmed identical to the old Frame 17 by diffing both
+  fresh from Figma, so this is an in-place update, not a new file): "Edit Enrollment" now opens a
+  real in-page side sheet (remittance/physical address, funding account, auto-initiation,
+  approval workflow, payment memo — with an in-sheet "Edit" toggle for the address fields), and
+  each row's "Add Memo" link opens a second side sheet that writes back into that row's memo cell
+  (or every row's, via "apply to all").
+- `home-connected.html`'s Priority Payments tab (Frame 18): the provider this prototype's own
+  wizard actually enrolls (Comcast) now shows an **APPROVAL NEEDED** pill instead of "Set Up",
+  linking into the invoice flow. Note: Figma's own sample data shows this state on PSE&G, not
+  Comcast — deliberately changed to match which provider this app's narrative actually enrolls,
+  not copied from the literal sample row.
+- `invoice-home.html`'s "Time Sensitive" tab (Frames 19/20/21.2/22.2) went from empty to real
+  content: summary cards + an **8-row** table (Figma's actual row count, not a round number) with
+  per-row "Approve Invoice" / "View Invoice" / "View Payment" actions. Reached via a new
+  `#time-sensitive` URL hash — introduced this round since no such deep-link convention existed
+  before. Approved rows persist via `localStorage` (`tsRow1Approved`/`tsRow3Approved`, the only
+  place in this prototype that persists state across page loads) so the list reflects approvals
+  made in `invoice-detail.html` when the user returns.
+- `invoice-detail.html` (Frames 20.1/21/21.1/22/22.1): added a `return` query param alongside the
+  existing `scenario` one, and an "Invoice approved / Got it!" confirmation modal shown after
+  Save. Figma's own Frame 21.1/22.1 nodes look like an authoring artifact (the unrelated
+  Auto-initiate-payments modal pasted on top of the invoice-detail frame) rather than a distinct
+  "approved" design — the modal here is a reasonable equivalent, not a literal copy.
+- `pay-home.html` (Frames 23/24): clicking any batch row now selects it (Figma's exact selected
+  blue) and opens an in-page detail panel — tags, an invoice-level table, a download-proof-of-
+  payment link, collapsible history. Simplified vs. Figma's full nested bank/vendor table (scoped
+  down intentionally); per-row invoice numbers/dates are this prototype's own synthetic data since
+  Figma only showed one example row's values.
+
 ### Earlier rounds (still applicable)
 
 - **Text kept verbatim from Figma even where it looked like a typo or was inconsistently
@@ -159,10 +209,10 @@ second screen no longer exist in Figma at all. This prototype's `wizard-route-*.
   instead of assuming a fixed depth, so it now works at any hosting depth.
 - **Not built, flagged rather than guessed at**: a separate "Wizard setup - without MFA" branch
   visible in the Figma file (its own Enroll Accounts / Master Vendor subsections) was never part
-  of any round's instructions and hasn't been built. The "Edit Enrollment" / "Edit behavior" /
-  "Add memo" side-sheet variants inside the PP Payment Rules step are similarly out of scope —
-  they belong to a "manage an already-enrolled vendor later" side-flow, not the enrollment
-  sequence itself.
+  of any round's instructions and hasn't been built. (The "Edit Enrollment" / "Add memo"
+  side-sheet variants were out of scope as of the first Priority Payments round, but were built in
+  the second round on 2026-09-28 once the designer's instructions explicitly called for them on
+  the Review and Enroll screen — see below.)
 
 No shared file (`shared.css`, `chrome.js`, `app.js`, `nav-map.json`) was fought over or diverged
 between the parallel agents that built each update — every screen still uses the same design

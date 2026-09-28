@@ -157,15 +157,15 @@
                 <th>Vendor Account Number</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Harmony Homes</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Willow Haven</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Haven</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Juniper</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Camden</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>The Hawthorne</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Grandview</td><td>89283918</td><td>HB22-33</td></tr>
-              <tr><td class="checkbox-cell"><input type="checkbox" /></td><td>Elora</td><td>89283918</td><td>HB22-33</td></tr>
+            <tbody id="apply-all-tbody">
+              <tr><td class="checkbox-cell"><input type="checkbox" id="apply-all-first" onchange="toggleApplyAll(this)" /></td><td>Harmony Homes</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>Willow Haven</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>The Haven</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>Juniper</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>The Camden</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>The Hawthorne</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>Grandview</td><td>89283918</td><td>HB22-33</td></tr>
+              <tr><td class="checkbox-cell"><input type="checkbox" class="apply-all-follower" /></td><td>Elora</td><td>89283918</td><td>HB22-33</td></tr>
             </tbody>
           </table>
           <div class="pp-pagination">
@@ -191,6 +191,14 @@
 <script src="../js/chrome.js"></script>
 <script src="../js/app.js"></script>
 <script>
+  // Figma instruction: clicking the first checkbox in the "Apply to all
+  // Vendor Accounts" table checks every other row's checkbox too.
+  function toggleApplyAll(first) {
+    document.querySelectorAll('.apply-all-follower').forEach(function (cb) {
+      cb.checked = first.checked;
+    });
+  }
+
   // Inline "Edit address" toggle: swaps the static Street/City,State,Zip
   // display for editable inputs + a Submit button, matching the Figma
   // "Edit address" frames (7026:24325 / 7026:24891) which show the physical

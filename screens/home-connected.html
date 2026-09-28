@@ -8,6 +8,11 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
   .pp-heading { font-size: 28px; font-weight: 500; margin: 0 0 4px; color: var(--color-text-default); }
+  /* Warning-styled pill for "APPROVAL NEEDED" (Frame 18) - colors from the Figma
+     Tag component's Warning variant (bg #FFFAE6 / border #F58312); no matching
+     variant existed yet in shared.css's .pill set, so it's scoped to this page. */
+  .pill-warning { background: #FFFAE6; border-color: #F58312; color: #8A4B08; }
+  a.pill-warning:hover { text-decoration: none; }
 </style>
 </head>
 <body data-active-nav="add-on-management">
@@ -142,7 +147,7 @@
                 <td><a href="#">Comcast</a></td>
                 <td>https://www.comcast.com</td>
                 <td>10</td>
-                <td><a href="../screens/pp-select-vendor.html">Set Up</a></td>
+                <td><a href="../screens/invoice-home.html" class="pill pill-warning" title="Enrollment approval needed - review in Invoice Home">APPROVAL NEEDED</a></td>
               </tr>
               <tr>
                 <td><a href="#">PSE&amp;G</a></td>

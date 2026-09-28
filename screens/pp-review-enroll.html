@@ -27,6 +27,19 @@
   .enroll-table td.checkbox-cell, .enroll-table th.checkbox-cell { width: 40px; }
   .enroll-table td.menu-cell, .enroll-table th.menu-cell { width: 32px; text-align: center; color: var(--color-text-placeholder); }
   .enroll-table input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--color-primary-b60); }
+
+  /* Edit Enrollment / Add Memo side sheets */
+  .es-field { margin-bottom: 20px; }
+  .es-field:last-child { margin-bottom: 0; }
+  .es-field-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .es-field-head label { font-size: 14px; font-weight: 600; margin: 0; }
+  .es-field label { font-size: 14px; font-weight: 600; display: block; margin-bottom: 4px; }
+  .es-field .field-value { font-size: 14px; margin: 0; }
+  .es-required { color: #C0392B; }
+  .es-edit-fields { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-light); }
+  .es-toggle-row { display: flex; align-items: flex-start; gap: 12px; }
+  .es-toggle-row .es-toggle-copy { font-weight: 600; font-size: 14px; }
+  .es-toggle-row .help-text { font-weight: 400; margin-top: 2px; }
 </style>
 </head>
 <body data-active-nav="add-on-management">
@@ -82,32 +95,32 @@
                   <div class="pp-provider-pill">HR1-332 / Harmony Building</div>
                 </div>
               </div>
-              <a href="pp-payment-rules.html" class="btn-tertiary">Edit Enrollment</a>
+              <a href="#" class="btn-tertiary" id="open-edit-enrollment">Edit Enrollment</a>
             </div>
 
             <div class="review-grid">
               <div>
                 <p class="field-label">REMITTANCE ADDRESS</p>
-                <p class="field-value">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
+                <p class="field-value" id="main-remittance-address">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
               </div>
               <div>
                 <p class="field-label">PHYSICAL ADDRESS</p>
-                <p class="field-value">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
+                <p class="field-value" id="main-physical-address">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
               </div>
               <div>
                 <p class="field-label">FUNDING ACCOUNT</p>
-                <p class="field-value">CIT Bank &bull;&bull;&bull;&bull;4145</p>
+                <p class="field-value" id="main-funding-account">CIT Bank &bull;&bull;&bull;&bull;4145</p>
               </div>
             </div>
 
             <div class="review-grid-2">
               <div>
                 <p class="field-label">AUTO-INITIATION</p>
-                <span class="pill pill-success">Enabled</span>
+                <span class="pill pill-success" id="main-auto-initiation-pill">Enabled</span>
               </div>
               <div>
                 <p class="field-label">APPROVAL WORKFLOW</p>
-                <span class="pill pill-muted">Time Sensitive Auto Payments</span>
+                <span class="pill pill-muted" id="main-approval-workflow-pill">Time Sensitive Auto Payments</span>
               </div>
             </div>
 
@@ -137,7 +150,7 @@
                 <td>Harmony Building</td>
                 <td>2391031032</td>
                 <td>HR1-332</td>
-                <td><a href="#" class="btn-tertiary">Add Memo</a></td>
+                <td><a href="#" class="btn-tertiary add-memo-link">Add Memo</a></td>
                 <td class="menu-cell">&#8942;</td>
               </tr>
               <tr>
@@ -169,7 +182,7 @@
                 <td>The Camden</td>
                 <td>89283918</td>
                 <td>HB22-33</td>
-                <td><a href="#" class="btn-tertiary">Add Memo</a></td>
+                <td><a href="#" class="btn-tertiary add-memo-link">Add Memo</a></td>
                 <td class="menu-cell">&#8942;</td>
               </tr>
             </tbody>
@@ -205,6 +218,117 @@
   </div>
 </div>
 
+<!-- Side sheet: Edit Enrollment (Frame 16.1, with 16.2's remittance-address edit state folded in) -->
+<div class="side-sheet-overlay" id="edit-enrollment-overlay">
+  <div class="side-sheet">
+    <div class="side-sheet-header">
+      <h3>Review and Enroll</h3>
+      <button type="button" class="side-sheet-close" id="edit-enrollment-close">&times;</button>
+    </div>
+
+    <div class="pp-tag-row" style="margin-bottom:24px;">
+      <div class="pp-tags-left">
+        <div class="pp-tag-group">
+          <p class="pp-context-label">BILL PROVIDER:</p>
+          <div class="pp-provider-pill">Comcast Internet</div>
+        </div>
+        <div class="pp-tag-group">
+          <p class="pp-context-label">ACCOUNT INFORMATION:</p>
+          <div class="pp-provider-pill">HR1-332 / Harmony Building</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="es-field">
+      <div class="es-field-head">
+        <label>Remittance Address <span class="es-required">*</span></label>
+        <a href="#" class="btn-tertiary" id="toggle-remittance-edit">Edit</a>
+      </div>
+      <p class="field-value" id="es-remittance-display">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
+      <div class="es-edit-fields" id="es-remittance-edit-fields" style="display:none;">
+        <div class="es-field">
+          <label for="es-remittance-street">Street</label>
+          <input type="text" id="es-remittance-street" placeholder="Street address" value="13 Hoshead Lane" />
+        </div>
+        <div class="es-field">
+          <label for="es-remittance-zip">ZIP</label>
+          <input type="text" id="es-remittance-zip" placeholder="ZIP code" value="28110" />
+        </div>
+      </div>
+    </div>
+
+    <div class="es-field">
+      <label>Physical Address</label>
+      <p class="field-value">13 Hoshead Lane,<br />Charlotte, NC 28110</p>
+    </div>
+
+    <div class="es-field">
+      <label for="es-funding-account">Funding Account <span class="es-required">*</span></label>
+      <select id="es-funding-account">
+        <option>CIT Bank &bull;&bull;&bull;&bull;4145</option>
+        <option>Chase Business &bull;&bull;&bull;&bull;4829</option>
+      </select>
+    </div>
+
+    <div class="es-field">
+      <div class="es-toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="es-auto-initiation" checked />
+          <span class="track"></span>
+        </label>
+        <div>
+          <div class="es-toggle-copy">Auto Initiation</div>
+          <p class="help-text">Automatically initiate transaction batches when ready</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="es-field">
+      <label for="es-approval-workflow">Approval Workflow <span class="es-required">*</span></label>
+      <select id="es-approval-workflow">
+        <option>Time Sensitive Auto Payments</option>
+        <option>Time Sensitive Auto Approval</option>
+        <option>High Risk Invoices</option>
+      </select>
+    </div>
+
+    <div class="es-field">
+      <label for="es-payment-memo">Payment Memo <span class="optional">(optional)</span></label>
+      <textarea id="es-payment-memo" placeholder="Enter default billing description or memo notes..."></textarea>
+    </div>
+
+    <div class="modal-footer" style="margin-top:8px;">
+      <button type="button" class="btn btn-secondary" id="edit-enrollment-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="edit-enrollment-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Side sheet: Add Memo (Frame 16.3) -->
+<div class="side-sheet-overlay" id="add-memo-overlay">
+  <div class="side-sheet">
+    <div class="side-sheet-header">
+      <h3>Add Memo</h3>
+      <button type="button" class="side-sheet-close" id="add-memo-close">&times;</button>
+    </div>
+
+    <div class="es-field">
+      <label for="add-memo-textarea">Payment Memo <span class="optional">(optional)</span></label>
+      <textarea id="add-memo-textarea" placeholder="Enter default billing description or memo notes..."></textarea>
+    </div>
+
+    <label class="apply-memo-row">
+      <input type="checkbox" id="add-memo-apply-all" />
+      Apply memo to all accounts
+    </label>
+
+    <div class="modal-footer" style="margin-top:24px;">
+      <button type="button" class="btn btn-secondary" id="add-memo-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="add-memo-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <script src="../js/chrome.js"></script>
 <script src="../js/app.js"></script>
 <script>
@@ -230,6 +354,110 @@
       var memoCell = row.children[4];
       memoCell.textContent = memo;
     });
+  });
+
+  // ---------------- Edit Enrollment side sheet (Frame 16.1 / 16.2) ----------------
+  var editSheetOverlay = document.getElementById('edit-enrollment-overlay');
+  var remittanceDisplay = document.getElementById('es-remittance-display');
+  var remittanceEditFields = document.getElementById('es-remittance-edit-fields');
+  var remittanceEditOpen = false;
+
+  function openEditSheet() {
+    editSheetOverlay.classList.add('open');
+  }
+  function closeEditSheet() {
+    editSheetOverlay.classList.remove('open');
+  }
+
+  document.getElementById('open-edit-enrollment').addEventListener('click', function (e) {
+    e.preventDefault();
+    openEditSheet();
+  });
+  document.getElementById('edit-enrollment-close').addEventListener('click', closeEditSheet);
+  document.getElementById('edit-enrollment-cancel').addEventListener('click', closeEditSheet);
+  editSheetOverlay.addEventListener('click', function (e) {
+    if (e.target === editSheetOverlay) closeEditSheet();
+  });
+
+  // "Edit" link next to Remittance Address reveals Street/ZIP inputs in place,
+  // mirroring Frame 16.2's state of this same side sheet (no second panel).
+  document.getElementById('toggle-remittance-edit').addEventListener('click', function (e) {
+    e.preventDefault();
+    remittanceEditOpen = !remittanceEditOpen;
+    remittanceEditFields.style.display = remittanceEditOpen ? 'block' : 'none';
+    remittanceDisplay.style.display = remittanceEditOpen ? 'none' : 'block';
+    e.target.textContent = remittanceEditOpen ? 'Cancel' : 'Edit';
+  });
+
+  document.getElementById('edit-enrollment-save').addEventListener('click', function () {
+    // Sync any remittance address edits back into the sheet's own display + main card.
+    if (remittanceEditOpen) {
+      var street = document.getElementById('es-remittance-street').value || '13 Hoshead Lane';
+      var zip = document.getElementById('es-remittance-zip').value || '28110';
+      var newAddress = street + ',<br />Charlotte, NC ' + zip;
+      remittanceDisplay.innerHTML = newAddress;
+      document.getElementById('main-remittance-address').innerHTML = newAddress;
+      remittanceEditOpen = false;
+      remittanceEditFields.style.display = 'none';
+      remittanceDisplay.style.display = 'block';
+      document.getElementById('toggle-remittance-edit').textContent = 'Edit';
+    }
+
+    document.getElementById('main-funding-account').textContent = document.getElementById('es-funding-account').value;
+
+    var autoInitOn = document.getElementById('es-auto-initiation').checked;
+    var autoInitPill = document.getElementById('main-auto-initiation-pill');
+    autoInitPill.textContent = autoInitOn ? 'Enabled' : 'Disabled';
+    autoInitPill.className = 'pill ' + (autoInitOn ? 'pill-success' : 'pill-muted');
+
+    document.getElementById('main-approval-workflow-pill').textContent = document.getElementById('es-approval-workflow').value;
+
+    var esMemo = document.getElementById('es-payment-memo').value;
+    if (esMemo) document.querySelector('.payment-memo-box').value = esMemo;
+
+    closeEditSheet();
+  });
+
+  // ---------------- Add Memo side sheet (Frame 16.3) ----------------
+  var addMemoOverlay = document.getElementById('add-memo-overlay');
+  var addMemoTextarea = document.getElementById('add-memo-textarea');
+  var addMemoApplyAll = document.getElementById('add-memo-apply-all');
+  var currentMemoRow = null;
+
+  function openAddMemoSheet(row) {
+    currentMemoRow = row;
+    addMemoTextarea.value = '';
+    addMemoApplyAll.checked = false;
+    addMemoOverlay.classList.add('open');
+  }
+  function closeAddMemoSheet() {
+    addMemoOverlay.classList.remove('open');
+    currentMemoRow = null;
+  }
+
+  document.querySelectorAll('.add-memo-link').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      openAddMemoSheet(link.closest('tr'));
+    });
+  });
+  document.getElementById('add-memo-close').addEventListener('click', closeAddMemoSheet);
+  document.getElementById('add-memo-cancel').addEventListener('click', closeAddMemoSheet);
+  addMemoOverlay.addEventListener('click', function (e) {
+    if (e.target === addMemoOverlay) closeAddMemoSheet();
+  });
+
+  document.getElementById('add-memo-save').addEventListener('click', function () {
+    var memo = addMemoTextarea.value.trim();
+    if (!memo) { closeAddMemoSheet(); return; }
+    if (addMemoApplyAll.checked) {
+      document.querySelectorAll('.enroll-table tbody tr').forEach(function (row) {
+        row.children[4].textContent = memo;
+      });
+    } else if (currentMemoRow) {
+      currentMemoRow.children[4].textContent = memo;
+    }
+    closeAddMemoSheet();
   });
 </script>
 </body>

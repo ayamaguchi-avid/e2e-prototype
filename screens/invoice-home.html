@@ -44,6 +44,45 @@
   table.ih-table tr.flag-row td { background:#FFFDF5; }
 
   .ih-footer { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-top:1px solid var(--border-default); font-size:12px; color:var(--color-text-placeholder); }
+
+  /* Time Sensitive tab content (Figma frame "20") — summary cards + table.
+     Scoped locally like the rest of this page; reuses shared.css tokens. */
+  .ts-cards { display:flex; gap:24px; align-items:stretch; margin-bottom:20px; }
+  .ts-card { background:#fff; border:1px solid #E0E1E1; border-radius:12px; padding:24px; display:flex; flex-direction:column; gap:16px; flex:1; min-width:0; }
+  .ts-card.providers { flex:2; }
+  .ts-card-header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .ts-card-title { font-size:16px; font-weight:600; color:var(--color-text-default); }
+  .ts-card-title.subdued { font-size:14px; color:#3E4C56; }
+  .ts-card-sub { font-size:12px; font-weight:500; color:#3E4C56; }
+  .ts-icon-badge { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ts-icon-badge img { width:14px; height:14px; display:block; }
+  .ts-metric-value { font-size:16px; font-weight:600; color:var(--color-text-default); }
+  .ts-metric-flag { display:inline-block; background:#FEE2E2; color:#D92D20; font-size:10px; font-weight:500; padding:2px 6px; border-radius:4px; }
+  .ts-metric-note { font-size:12px; font-weight:500; color:#007F42; }
+  .ts-card-footer { margin-top:auto; }
+  .ts-provider-list { display:flex; flex-direction:column; gap:12px; }
+  .ts-provider-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .ts-provider-left { display:flex; align-items:center; gap:12px; }
+  .ts-provider-logo { width:32px; height:32px; border-radius:6px; background:#F2F4F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ts-provider-logo img { width:18px; height:18px; display:block; }
+  .ts-provider-name { font-size:14px; font-weight:600; color:var(--color-text-default); white-space:nowrap; }
+  .ts-provider-tags { display:flex; gap:8px; flex-shrink:0; }
+  .ts-tag { display:inline-block; font-size:11px; font-weight:600; text-transform:uppercase; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .ts-tag-success { background:#E6F7ED; color:#007F42; }
+  .ts-tag-info { background:#EBF5FF; color:#0263D4; }
+  .ts-tag-warning { background:#FFFAE6; color:#F58312; }
+  .ts-tag-neutral { background:var(--bg-surface-secondary); color:var(--color-text-default); }
+  .ts-tag-critical { background:#FEE2E2; color:#D92D20; }
+
+  .ts-table-wrap { background:#fff; border:1px solid var(--border-light); overflow-x:auto; }
+  table.ts-table { width:100%; border-collapse:collapse; font-size:13px; white-space:nowrap; }
+  table.ts-table th, table.ts-table td { text-align:left; padding:10px 12px; border-top:1px solid var(--border-default); }
+  table.ts-table th { background:var(--bg-surface-secondary); font-weight:600; font-size:14px; }
+  table.ts-table tr.flag-row td { background:#FFFDF5; }
+  table.ts-table td.num { text-align:right; }
+  table.ts-table .approved-note { color:var(--color-text-placeholder); font-style:italic; }
+
+  .empty-tab-note { padding:48px 24px; }
 </style>
 </head>
 <body data-app="invoice" data-active-nav="invoice">
@@ -61,17 +100,18 @@
       <div>
         <p class="aw-title">Time Sensitive Payment</p>
         <p class="aw-body">You have a time sensitive payment pending approval</p>
-        <a href="#" onclick="return false;">Go to pending approval</a>
+        <a href="#time-sensitive" id="goToTimeSensitiveLink">Go to pending approval</a>
       </div>
       <button class="aw-close" onclick="this.closest('.alert-warning').style.display='none'">&times;</button>
     </div>
 
     <div class="ih-tabs">
-      <div class="ih-tab active">Pending Approval <span class="count">1</span></div>
-      <div class="ih-tab">Disputed <span class="count">0</span></div>
-      <div class="ih-tab">Time Sensitive <span class="count">0</span></div>
+      <div class="ih-tab active" data-tab="pending">Pending Approval <span class="count">1</span></div>
+      <div class="ih-tab" data-tab="disputed">Disputed <span class="count">0</span></div>
+      <div class="ih-tab" data-tab="time-sensitive">Time Sensitive <span class="count" id="timeSensitiveCount">8</span></div>
     </div>
 
+    <div class="stage active" id="stage-pending">
     <div class="ih-table-wrap">
       <table class="ih-table">
         <thead>
@@ -211,9 +251,269 @@
         <span>1 - 5 of 5 items</span>
       </div>
     </div>
+    </div>
+
+    <div class="stage" id="stage-disputed">
+      <div class="empty-state empty-tab-note">
+        <h3>No disputed invoices</h3>
+        <p>Invoices you've disputed with a supplier will show up here.</p>
+      </div>
+    </div>
+
+    <div class="stage" id="stage-time-sensitive">
+      <div class="ts-cards">
+        <div class="ts-card providers">
+          <div class="ts-card-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span class="ts-card-title">Providers</span>
+              <span class="ts-card-sub">3 Connected</span>
+            </div>
+            <a href="#" class="btn-tertiary" onclick="return false;">Manage</a>
+          </div>
+          <div class="ts-provider-list">
+            <div class="ts-provider-row">
+              <div class="ts-provider-left">
+                <span class="ts-provider-logo"><img src="../assets/invoice-pay/icons/bolt.svg" alt="" /></span>
+                <span class="ts-provider-name">Duke Energy</span>
+              </div>
+              <div class="ts-provider-tags">
+                <span class="ts-tag ts-tag-success">Priority Payments</span>
+                <span class="ts-tag ts-tag-info">Connected Bill Retrieval</span>
+              </div>
+            </div>
+            <div class="ts-provider-row">
+              <div class="ts-provider-left">
+                <span class="ts-provider-logo"><img src="../assets/invoice-pay/icons/droplet.svg" alt="" /></span>
+                <span class="ts-provider-name">Dominion Water</span>
+              </div>
+              <div class="ts-provider-tags">
+                <span class="ts-tag ts-tag-info">Connected Bill Retrieval</span>
+              </div>
+            </div>
+            <div class="ts-provider-row">
+              <div class="ts-provider-left">
+                <span class="ts-provider-logo"><img src="../assets/invoice-pay/icons/globe.svg" alt="" /></span>
+                <span class="ts-provider-name">Charter Netter</span>
+              </div>
+              <div class="ts-provider-tags">
+                <span class="ts-tag ts-tag-info">Connected Bill Retrieval</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ts-card">
+          <div class="ts-card-header">
+            <span class="ts-card-title subdued">Pending Approval</span>
+            <span class="ts-icon-badge" style="background:#fef3c7;"><img src="../assets/invoice-pay/icons/clock.svg" alt="" /></span>
+          </div>
+          <div class="ts-metric-value">18</div>
+          <div><span class="ts-metric-flag">3 CLOSE TO PAY DATE</span></div>
+          <div class="ts-card-footer"><a class="btn btn-secondary" href="#time-sensitive" onclick="return false;" style="width:100%;">Review Pending</a></div>
+        </div>
+
+        <div class="ts-card">
+          <div class="ts-card-header">
+            <span class="ts-card-title subdued">Payment Queue</span>
+            <span class="ts-icon-badge" style="background:#ecfdf5;"><img src="../assets/invoice-pay/icons/credit-card.svg" alt="" /></span>
+          </div>
+          <div class="ts-metric-value">24</div>
+          <div class="ts-card-footer"><a class="btn btn-secondary" href="pay-home.html" style="width:100%;">View Payment Queue</a></div>
+        </div>
+
+        <div class="ts-card">
+          <div class="ts-card-header">
+            <span class="ts-card-title subdued">Bills on auto payment</span>
+            <span class="ts-icon-badge" style="background:#eff8ff;"><img src="../assets/invoice-pay/icons/file-text.svg" alt="" /></span>
+          </div>
+          <div class="ts-metric-value">24</div>
+          <div class="ts-metric-note">10324 hours saved</div>
+          <div class="ts-card-footer"><a class="btn btn-secondary" href="#" onclick="return false;" style="width:100%;">View All</a></div>
+        </div>
+      </div>
+
+      <div class="ts-table-wrap">
+        <table class="ts-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" /></th>
+              <th></th>
+              <th>Provider</th>
+              <th>Provider Account</th>
+              <th>Invoice Date</th>
+              <th>Due Date</th>
+              <th>Property</th>
+              <th class="num">Amount Due</th>
+              <th class="num">Payment Amount</th>
+              <th>Stage</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="flag-row" id="ts-row-1">
+              <td><input type="checkbox" /></td>
+              <td><svg class="flag-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6.5 6.5 11h-13L12 8.5ZM11 10h2v5h-2v-5Zm0 6.5h2v2h-2v-2Z"/></svg></td>
+              <td>Comcast</td>
+              <td>123456789012</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>Mountain Land Condo</td>
+              <td class="num">6944.00</td>
+              <td class="num">&ndash;</td>
+              <td id="ts-row1-stage"><span class="ts-tag ts-tag-warning">Needs Approval</span></td>
+              <td id="ts-row1-action"><a href="invoice-detail.html?scenario=no-stp&amp;return=row1">Approve Invoice</a></td>
+            </tr>
+            <tr id="ts-row-2">
+              <td><input type="checkbox" /></td>
+              <td></td>
+              <td>Comcast</td>
+              <td>789012123456</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>Uptown Apartments</td>
+              <td class="num">2323.44</td>
+              <td class="num">&ndash;</td>
+              <td><span class="ts-tag ts-tag-info">Invoice Received</span></td>
+              <td><a href="invoice-detail.html?scenario=fine&amp;return=20">View Invoice</a></td>
+            </tr>
+            <tr class="flag-row" id="ts-row-3">
+              <td><input type="checkbox" /></td>
+              <td><svg class="flag-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6.5 6.5 11h-13L12 8.5ZM11 10h2v5h-2v-5Zm0 6.5h2v2h-2v-2Z"/></svg></td>
+              <td>Comcast</td>
+              <td>012123423412</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>Autumm Leaves Place</td>
+              <td class="num">524.22</td>
+              <td class="num">&ndash;</td>
+              <td id="ts-row3-stage"><span class="ts-tag ts-tag-warning">Needs Approval</span></td>
+              <td id="ts-row3-action"><a href="invoice-detail.html?scenario=anomaly&amp;return=row3">Approve Invoice</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td></td>
+              <td>Charlotte Water</td>
+              <td>1234567-890123</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>Urban Haven</td>
+              <td class="num">5532.55</td>
+              <td class="num">5532.55</td>
+              <td><span class="ts-tag ts-tag-neutral">Payment Queue</span></td>
+              <td><a href="pay-home.html">View Payment</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td></td>
+              <td>Charlotte Water</td>
+              <td>890123-890123</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>Cassidy Lane</td>
+              <td class="num">6944.00</td>
+              <td class="num">6944.00</td>
+              <td><span class="ts-tag ts-tag-neutral">Processing Pay</span></td>
+              <td><a href="pay-home.html">View Payment</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td></td>
+              <td>Ace Disposal</td>
+              <td>123234-22211</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>Modern Perch</td>
+              <td class="num">524.22</td>
+              <td class="num">250.22</td>
+              <td><span class="ts-tag ts-tag-success">Paid</span></td>
+              <td><a href="pay-home.html">View Payment</a></td>
+            </tr>
+            <tr class="flag-row">
+              <td><input type="checkbox" /></td>
+              <td><svg class="flag-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6.5 6.5 11h-13L12 8.5ZM11 10h2v5h-2v-5Zm0 6.5h2v2h-2v-2Z"/></svg></td>
+              <td>Ace Disposal</td>
+              <td>334242</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>The Lofts</td>
+              <td class="num">6944.00</td>
+              <td class="num">6944.00</td>
+              <td><span class="ts-tag ts-tag-critical">Failed Approval</span></td>
+              <td><a href="#" onclick="return false;">Resolve</a></td>
+            </tr>
+            <tr class="flag-row">
+              <td><input type="checkbox" /></td>
+              <td><svg class="flag-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 6.5 6.5 11h-13L12 8.5ZM11 10h2v5h-2v-5Zm0 6.5h2v2h-2v-2Z"/></svg></td>
+              <td>Ace Disposal</td>
+              <td>1103109</td>
+              <td>05/09/2026</td>
+              <td>05/30/2026</td>
+              <td>The Hendrix</td>
+              <td class="num">2323.44</td>
+              <td class="num">2323.44</td>
+              <td><span class="ts-tag ts-tag-critical">Failed Payment</span></td>
+              <td><a href="#" onclick="return false;">Resolve</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </main>
 </div>
 <script src="../js/chrome-invoice.js"></script>
+<script>
+  (function () {
+    // Tab strip <-> stage panel switching. Only "Time Sensitive" has real
+    // content wired up for this flow; "Disputed" is a placeholder empty state.
+    var tabEls = Array.prototype.slice.call(document.querySelectorAll('.ih-tab'));
+    var stages = {
+      pending: document.getElementById('stage-pending'),
+      disputed: document.getElementById('stage-disputed'),
+      'time-sensitive': document.getElementById('stage-time-sensitive')
+    };
+
+    function activate(tabKey) {
+      if (!stages[tabKey]) tabKey = 'pending';
+      tabEls.forEach(function (el) {
+        el.classList.toggle('active', el.getAttribute('data-tab') === tabKey);
+      });
+      Object.keys(stages).forEach(function (key) {
+        stages[key].classList.toggle('active', key === tabKey);
+      });
+    }
+
+    tabEls.forEach(function (el) {
+      el.addEventListener('click', function () {
+        activate(el.getAttribute('data-tab'));
+      });
+    });
+
+    // Row 1 / Row 3 approval state, set by invoice-detail.html's "Got it!"
+    // confirmation after approving a time-sensitive invoice. Persisted in
+    // localStorage (simplest reliable option for a static prototype - no
+    // query string round-trip needed, survives the invoice-detail.html hop).
+    function markApproved(rowNum) {
+      var actionCell = document.getElementById('ts-row' + rowNum + '-action');
+      var stageCell = document.getElementById('ts-row' + rowNum + '-stage');
+      var row = document.getElementById('ts-row-' + rowNum);
+      if (stageCell) stageCell.innerHTML = '<span class="ts-tag ts-tag-neutral">Payment Queue</span>';
+      if (actionCell) actionCell.innerHTML = '<a href="pay-home.html">View Payment</a>';
+      if (row) row.classList.remove('flag-row');
+    }
+
+    if (localStorage.getItem('tsRow1Approved') === '1') markApproved(1);
+    if (localStorage.getItem('tsRow3Approved') === '1') markApproved(3);
+
+    // Land on the Time Sensitive tab when linked to with #time-sensitive
+    // (used by the "Go to pending approval" banner link on this page, and by
+    // the "Got it!" confirmation on invoice-detail.html).
+    function syncFromHash() {
+      activate(location.hash === '#time-sensitive' ? 'time-sensitive' : 'pending');
+    }
+    window.addEventListener('hashchange', syncFromHash);
+    if (location.hash === '#time-sensitive') syncFromHash();
+  })();
+</script>
 </body>
 </html>
