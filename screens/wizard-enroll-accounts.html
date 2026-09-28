@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Enroll accounts - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .step-tracker li.done .step-status { color: #007F42; }
+  .enroll-search { max-width: 360px; margin-bottom: 16px; }
+  .btn-sm { height: 28px; padding: 0 12px; font-size: 13px; }
+  table.data-table td.link-cell { text-align: right; white-space: nowrap; }
+  table.data-table .linked-label { color: var(--color-link); font-weight: 600; }
+
+  /* The Figma "Link a vendor account" dialog is wider than the shared
+     420px .modal, so extend it here rather than editing shared.css. */
+  .modal-wide { width: 760px; max-width: 92vw; max-height: 90vh; overflow-y: auto; }
+  .modal-wide h3 { font-size: 20px; font-weight: 600; margin: 0 0 16px; }
+  .modal-wide ol { margin: 0 0 20px; padding-left: 20px; font-size: 14px; line-height: 20px; }
+  .modal-wide .info-row { display: flex; gap: 32px; margin: 4px 0 20px; }
+  .modal-wide .info-row .info-label { font-size: 12px; color: var(--color-text-placeholder); margin: 0 0 2px; }
+  .modal-wide .info-row .info-value { font-size: 14px; font-weight: 500; margin: 0; }
+  .billing-cycle-field { max-width: 280px; }
+  table.vendor-select-table input[type=radio] { accent-color: var(--color-primary-b60); }
+  table.vendor-select-table td, table.vendor-select-table th { padding: 10px 12px; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done"><span class="dot"></span><span class="step-label">Bill providers<span class="step-status">Success</span></span></li>
+        <li class="done"><span class="dot"></span><span class="step-label">Submit credential<span class="step-status">Success</span></span></li>
+        <li class="done"><span class="dot"></span><span class="step-label">Master vendor<span class="step-status">Success</span></span></li>
+        <li class="current"><span class="dot">4</span><span class="step-label">Enroll accounts<span class="step-status">In progress</span></span></li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Enroll accounts</h1>
+        <p class="wizard-intro">Link a vendor account to the bill provider account you want to enroll. Press Enroll to complete the setup process.</p>
+
+        <div class="wizard-body">
+          <div class="search-input-wrap enroll-search">
+            <img src="../assets/icons/search.svg" alt="" />
+            <input type="search" placeholder="Search provider account number" />
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>
+                  Provider account number
+                  <span class="tt" tabindex="0">
+                    <span class="tt-icon" aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; border:1.5px solid currentColor; font-size:10px; font-weight:700;">i</span>
+                    <span class="tt-bubble">This account number comes from the bill provider.</span>
+                  </span>
+                </th>
+                <th>Account type</th>
+                <th>Credential</th>
+                <th>Vendor account #</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-provider-number="01956356" data-credential="agrater@nextrealty.com">
+                <td>01956356</td>
+                <td>Summary</td>
+                <td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td>
+                <td class="vendor-account-cell">&nbsp;</td>
+                <td class="link-cell"><button type="button" class="btn btn-primary btn-sm link-btn">Link</button></td>
+              </tr>
+              <tr data-provider-number="82359673" data-credential="agrater@nextrealty.com">
+                <td>82359673</td>
+                <td>Sub account</td>
+                <td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td>
+                <td class="vendor-account-cell">&nbsp;</td>
+                <td class="link-cell"><button type="button" class="btn btn-primary btn-sm link-btn">Link</button></td>
+              </tr>
+              <tr data-provider-number="27598693" data-credential="agrater@nextrealty.com">
+                <td>27598693</td>
+                <td>Sub account</td>
+                <td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td>
+                <td class="vendor-account-cell">&nbsp;</td>
+                <td class="link-cell"><button type="button" class="btn btn-primary btn-sm link-btn">Link</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="wizard-footer">
+          <a class="btn btn-tertiary" href="../screens/home-connected.html">&larr; Save &amp; Exit</a>
+          <div style="display:flex; gap:8px;">
+            <a class="btn btn-secondary" href="../screens/wizard-master-vendor-102.html">Back</a>
+            <button class="btn btn-primary" id="enrollBtn" disabled>Enroll</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- "Link a vendor account" modal (shared.css .modal-overlay/.modal, widened via .modal-wide) -->
+<div class="modal-overlay" id="linkModal">
+  <div class="modal modal-wide">
+    <h3>Link a vendor account</h3>
+    <ol>
+      <li>Select the billing cycle for this account.</li>
+      <li>Select the <strong>account #</strong> that matches the <strong>provider account number</strong>.</li>
+    </ol>
+
+    <div class="field billing-cycle-field">
+      <label>Billing cycle</label>
+      <select id="billingCycleSelect">
+        <option value="Monthly">Monthly</option>
+        <option value="Weekly">Weekly</option>
+        <option value="Yearly">Yearly</option>
+      </select>
+    </div>
+
+    <div class="info-row">
+      <div>
+        <p class="info-label">Provider account number</p>
+        <p class="info-value" id="modalProviderNumber">&nbsp;</p>
+      </div>
+      <div>
+        <p class="info-label">Credential</p>
+        <p class="info-value" id="modalCredential">&nbsp;</p>
+      </div>
+      <div>
+        <p class="info-label">Bill Provider</p>
+        <p class="info-value">PSE&amp;G</p>
+      </div>
+    </div>
+
+    <table class="data-table vendor-select-table">
+      <thead>
+        <tr><th></th><th>Account #</th><th>Vendor account name</th><th>Remittance address</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><input type="radio" name="vendor-account" /></td><td>01956356</td><td><a href="#" onclick="return false;">PSEG Newark</a></td><td>78 Oak Street, Newark, NJ 07102</td></tr>
+        <tr><td><input type="radio" name="vendor-account" /></td><td>82359673</td><td><a href="#" onclick="return false;">PSEG Jersey</a></td><td>45 Maple Lane, Trenton, NJ 08618</td></tr>
+        <tr><td><input type="radio" name="vendor-account" /></td><td>27598693</td><td><a href="#" onclick="return false;">PSEG Downtown</a></td><td>23 Pine Avenue, Camden, NJ 08103</td></tr>
+        <tr><td><input type="radio" name="vendor-account" /></td><td>23452346</td><td><a href="#" onclick="return false;">PSEG Boardwalk</a></td><td>56 Cedar Drive, Jersey City, NJ 07305</td></tr>
+        <tr><td><input type="radio" name="vendor-account" /></td><td>46785634</td><td><a href="#" onclick="return false;">PSEG Atlantic Hotel</a></td><td>89 Birch Boulevard, Hoboken, NJ 07030</td></tr>
+        <tr><td><input type="radio" name="vendor-account" /></td><td>95686425</td><td><a href="#" onclick="return false;">PSEG Hudson View</a></td><td>34 Elm Road, Paterson, NJ 07501</td></tr>
+      </tbody>
+    </table>
+
+    <div class="modal-footer" style="justify-content:space-between; margin-top:4px;">
+      <a class="btn btn-tertiary" href="#" id="linkModalCancel">Cancel</a>
+      <button class="btn btn-primary" id="linkModalConfirm" disabled>Link</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  (function () {
+    var overlay = document.getElementById('linkModal');
+    var confirmBtn = document.getElementById('linkModalConfirm');
+    var cancelLink = document.getElementById('linkModalCancel');
+    var billingCycleSelect = document.getElementById('billingCycleSelect');
+    var modalProviderNumber = document.getElementById('modalProviderNumber');
+    var modalCredential = document.getElementById('modalCredential');
+    var radios = overlay.querySelectorAll('input[name="vendor-account"]');
+    var enrollBtn = document.getElementById('enrollBtn');
+    var activeRow = null;
+
+    function openModal(row) {
+      activeRow = row;
+      modalProviderNumber.textContent = row.getAttribute('data-provider-number');
+      modalCredential.textContent = row.getAttribute('data-credential');
+      billingCycleSelect.value = 'Monthly';
+      radios.forEach(function (r) { r.checked = false; });
+      confirmBtn.disabled = true;
+      overlay.classList.add('open');
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      activeRow = null;
+    }
+
+    document.querySelectorAll('.link-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openModal(btn.closest('tr'));
+      });
+    });
+
+    radios.forEach(function (r) {
+      r.addEventListener('change', function () {
+        confirmBtn.disabled = false;
+      });
+    });
+
+    cancelLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      closeModal();
+    });
+
+    confirmBtn.addEventListener('click', function () {
+      if (confirmBtn.disabled || !activeRow) return;
+      var selected = overlay.querySelector('input[name="vendor-account"]:checked');
+      if (!selected) return;
+      var vendorName = selected.closest('tr').querySelector('td:nth-child(3) a').textContent;
+
+      var row = activeRow;
+      row.querySelector('.vendor-account-cell').innerHTML = '<a href="#" class="linked-label" onclick="return false;">' + vendorName + '</a>';
+
+      var actionCell = row.querySelector('.link-cell');
+      actionCell.innerHTML = '<button type="button" class="btn btn-secondary btn-sm unlink-btn">Unlink</button>';
+      wireUnlinkButton(actionCell.querySelector('.unlink-btn'), row);
+
+      updateEnrollState();
+      closeModal();
+    });
+
+    function wireUnlinkButton(btn, row) {
+      btn.addEventListener('click', function () {
+        row.querySelector('.vendor-account-cell').innerHTML = '&nbsp;';
+        var actionCell = row.querySelector('.link-cell');
+        actionCell.innerHTML = '<button type="button" class="btn btn-primary btn-sm link-btn">Link</button>';
+        actionCell.querySelector('.link-btn').addEventListener('click', function () {
+          openModal(row);
+        });
+        updateEnrollState();
+      });
+    }
+
+    function updateEnrollState() {
+      var anyLinked = document.querySelectorAll('.unlink-btn').length > 0;
+      enrollBtn.disabled = !anyLinked;
+    }
+
+    enrollBtn.addEventListener('click', function () {
+      if (!enrollBtn.disabled) window.location.href = '../screens/wizard-confirmation.html';
+    });
+  })();
+</script>
+</body>
+</html>

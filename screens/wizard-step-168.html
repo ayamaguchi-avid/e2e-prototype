@@ -60,7 +60,7 @@
               </div>
 
               <label class="selectable-card">
-                <input type="radio" name="mfa-method" checked />
+                <input type="radio" name="mfa-method" value="email" checked />
                 <img class="mfa-method-icon" src="../assets/wizard/mfa-email.svg" alt="" />
                 <span>
                   <span class="sc-title">Email</span><br />
@@ -69,7 +69,7 @@
               </label>
 
               <label class="selectable-card">
-                <input type="radio" name="mfa-method" />
+                <input type="radio" name="mfa-method" value="authenticator" />
                 <img class="mfa-method-icon" src="../assets/wizard/mfa-authenticator-app.svg" alt="" />
                 <span>
                   <span class="sc-title">Authenticator app</span><br />
@@ -78,7 +78,7 @@
               </label>
 
               <label class="selectable-card">
-                <input type="radio" name="mfa-method" />
+                <input type="radio" name="mfa-method" value="sms" />
                 <img class="mfa-method-icon" src="../assets/wizard/mfa-sms.svg" alt="" />
                 <span>
                   <span class="sc-title">Text message (SMS)</span><br />
@@ -89,7 +89,7 @@
               <div class="mfa-or"><hr /><span class="text-muted">or</span><hr /></div>
 
               <label class="selectable-card" style="margin-bottom:0;">
-                <input type="radio" name="mfa-method" />
+                <input type="radio" name="mfa-method" value="none" />
                 <span class="sc-title">MFA not enabled</span>
               </label>
             </div>
@@ -100,7 +100,7 @@
           <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
           <div style="display:flex; gap:8px;">
             <a href="wizard-search-provider.html" class="btn btn-secondary">Back</a>
-            <a href="wizard-route-a.html" class="btn btn-primary">Next</a>
+            <button type="button" id="next-btn" class="btn btn-primary">Next</button>
           </div>
         </div>
       </div>
@@ -109,5 +109,18 @@
 </div>
 <script src="../js/chrome.js"></script>
 <script src="../js/app.js"></script>
+<script>
+  // Branch on the selected MFA method: "MFA not enabled" skips straight to
+  // credentials login, everything else continues into the forward-email flow.
+  document.getElementById('next-btn').addEventListener('click', function () {
+    var selected = document.querySelector('input[name="mfa-method"]:checked');
+    var method = selected ? selected.value : 'email';
+    if (method === 'none') {
+      location.href = 'wizard-login-credentials.html';
+    } else {
+      location.href = 'wizard-forward-email.html';
+    }
+  });
+</script>
 </body>
 </html>

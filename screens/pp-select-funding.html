@@ -5,7 +5,7 @@
 <title>Select Funding Account - Priority Payments - AvidXchange</title>
 <link rel="stylesheet" href="../css/shared.css" />
 <style>
-  .pp-heading { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .pp-heading { font-size: 24px; line-height: 28px; font-weight: 600; margin: 0 0 4px; }
   .pp-subtext { font-size: 14px; color: var(--color-text-default); margin: 0 0 20px; }
   .pp-tag-row { display: flex; gap: 32px; margin-bottom: 24px; flex-wrap: wrap; }
   .pp-tag-row .pp-tag-group { display: flex; flex-direction: column; gap: 6px; }
@@ -14,7 +14,11 @@
   .pp-verified-pill { display: inline-flex; align-items: center; gap: 4px; border: 1px solid #B7E4C7; color: #1E6B3C; background: #E9F7EF; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px; width: fit-content; }
 
   .funding-cards { display: flex; gap: 20px; margin-bottom: 28px; }
-  .funding-card { flex: 1; border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; }
+  .funding-card { flex: 1; border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; cursor: pointer; }
+  /* Single-select card state, matching the .selectable-card.selected treatment
+     used elsewhere in the prototype (shared.css) for consistency. */
+  .funding-card.selected { border-color: var(--color-primary-b60); }
+  .funding-card.selected .funding-card-body { background: #F0F7FF; }
   .funding-card-body { padding: 20px; text-align: center; position: relative; }
   .funding-card .active-pill { position: absolute; top: 14px; right: 16px; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #1E6B3C; }
   .funding-card .active-pill::before { content: "\25CF"; color: #1E6B3C; font-size: 10px; }
@@ -241,6 +245,18 @@
     }
   };
 
+  // Bank cards are clickable, single-select (only one at a time), matching
+  // the same single-select approach used on pp-select-vendor.html: clicking
+  // a card marks it selected and clears the other one.
+  var fundingCards = document.querySelectorAll('.funding-card');
+  fundingCards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      fundingCards.forEach(function (other) {
+        other.classList.toggle('selected', other === card);
+      });
+    });
+  });
+
   var overlay = document.getElementById('account-sheet-overlay');
   var maskToggle = document.getElementById('sheet-mask-toggle');
   var maskedEl = document.getElementById('sheet-account-masked');
@@ -250,6 +266,10 @@
   document.querySelectorAll('.view-account-link').forEach(function (link) {
     link.addEventListener('click', function (e) {
       e.preventDefault();
+      // Don't let the click bubble up to the card's own select handler --
+      // opening the account detail side sheet is independent of selecting
+      // the funding account.
+      e.stopPropagation();
       var bank = BANKS[link.getAttribute('data-bank')];
       currentBank = bank;
       document.getElementById('sheet-title').textContent = bank.title;

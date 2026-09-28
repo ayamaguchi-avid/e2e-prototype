@@ -5,7 +5,7 @@
 <title>Confirm Vendor Address - Priority Payments - AvidXchange</title>
 <link rel="stylesheet" href="../css/shared.css" />
 <style>
-  .pp-heading { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .pp-heading { font-size: 24px; line-height: 28px; font-weight: 600; margin: 0 0 4px; }
   .pp-subtext { font-size: 14px; color: var(--color-text-default); margin: 0 0 20px; }
   .pp-tag-row { display: flex; gap: 32px; margin-bottom: 12px; }
   .pp-tag-row .pp-tag-group { display: flex; flex-direction: column; gap: 6px; }
@@ -212,7 +212,11 @@
     });
   });
 
-  // Stage progression: confirm -> validating -> validated (auto-advance).
+  // Stage progression: confirm (11) -> validating (12) -> validated (13).
+  // Per the designer's explicit interaction spec: "Frame 12: Frame on for
+  // 7 seconds then moves to 13" -- this is a real 7000ms wait, not a UX
+  // shortcut, so the "Validating your address" banner (12) stays visible
+  // for the full 7 seconds before advancing to the validated state (13).
   var validateBtn = document.getElementById('validate-address-btn');
   var banner = document.getElementById('validating-banner');
   var pill = document.getElementById('validated-pill');
@@ -226,7 +230,7 @@
       pill.style.display = 'inline-flex';
       validateBtn.disabled = false;
       nextBtn.style.display = 'inline-flex';
-    }, 1200);
+    }, 7000);
   });
 </script>
 </body>

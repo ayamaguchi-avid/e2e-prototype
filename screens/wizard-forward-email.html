@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Connect to PSE&amp;G - AvidXchange</title>
+<link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .mfa-panel { background: #0A2E57; border: 1px solid #122B6A; border-radius: 4px; padding: 24px; display: flex; justify-content: center; }
+  .mfa-card { background: #fff; border: 1px solid #E0E1E1; border-radius: 4px; padding: 16px 40px; width: 100%; max-width: 630px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+  .mfa-card h2 { font-size: 16px; font-weight: 600; margin: 0; }
+  .mfa-email-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .mfa-email-row img { width: 60px; height: 60px; }
+  .mfa-email-row .mfa-email-title { font-size: 32px; font-weight: 600; line-height: 40px; }
+  .mfa-card .mfa-desc-block { text-align: left; width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 4px; }
+  .mfa-card .mfa-desc-block p { margin: 0 0 12px; font-size: 16px; }
+  .mfa-card .field { width: 100%; max-width: 550px; margin-bottom: 0; text-align: left; position: relative; }
+  .email-menu { width: 100%; max-width: 550px; background: #fff; border: 1px solid var(--border-default); border-radius: 4px; margin-top: -1px; box-shadow: 0 4px 10px rgba(0,0,0,.08); }
+  .email-menu .menu-add { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: 14px; color: var(--color-link); font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--border-light); }
+  .email-menu .menu-add:hover { background: #F4F5F6; }
+  .email-menu .menu-check { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
+  .email-menu .menu-check input { accent-color: var(--color-primary-b60); }
+  .dropdown-field { position: relative; cursor: pointer; }
+  .dropdown-field input { padding-right: 34px; cursor: pointer; background: #fff; }
+  .dropdown-field .chevron { position: absolute; right: 8px; top: 50%; transform: translateY(-50%) rotate(90deg); width: 16px; height: 16px; opacity: .6; }
+
+  .stage-frame { background:#0A2E57; border:1px solid #122B6A; border-radius:4px; padding:24px; display:flex; align-items:center; justify-content:center; min-height:500px; }
+  .stage-card { background:#fff; border:1px solid #E0E1E1; border-radius:4px; padding:16px 40px; display:flex; flex-direction:column; align-items:center; gap:24px; width:630px; max-width:100%; }
+  .stage-card h2 { font-size:16px; font-weight:600; margin:0; text-align:center; }
+  .stage-body { width:550px; max-width:100%; display:flex; flex-direction:column; gap:16px; }
+  .stage-body p { margin:0; font-size:16px; line-height:24px; }
+  .stage-actions { width:550px; max-width:100%; display:flex; gap:8px; }
+  .alert-otp { display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:4px; background:#FBF1FF; border:1px solid #680E7E; width:550px; max-width:100%; }
+  .alert-otp img { width:20px; height:20px; flex-shrink:0; margin-top:2px; }
+  .alert-otp .otp-text { font-size:16px; line-height:24px; margin:0 0 4px; color:var(--color-text-default); }
+  .alert-otp .otp-resend { font-size:14px; font-weight:500; }
+  .alert-otp .otp-resend.disabled { color: var(--color-text-disabled); }
+
+  .mfa-steps { margin:0; padding-left:24px; font-size:16px; line-height:24px; color:var(--color-text-default); width:550px; max-width:100%; text-align:left; }
+  .mfa-steps li { margin-bottom:0; }
+  .mfa-steps a.ext-link { display:inline-flex; align-items:center; gap:4px; font-size:16px; }
+  .mfa-steps a.ext-link img { width:16px; height:16px; }
+  .copy-field { display:flex; align-items:center; gap:4px; border:1px solid var(--border-light); border-radius:4px; padding:8px; background:#fff; width:550px; max-width:100%; }
+  .copy-field span { flex:1; font-size:14px; color:var(--color-text-default); }
+  .copy-field img { width:16px; height:16px; opacity:.7; cursor:pointer; }
+  .mfa-checkbox { display:flex; align-items:center; gap:8px; cursor:pointer; width:550px; max-width:100%; }
+  .mfa-checkbox input { width:20px; height:20px; accent-color: var(--color-primary-b60); }
+  .mfa-checkbox span { font-size:14px; color:var(--color-text-default); }
+
+  .toast-banner { display:flex; align-items:flex-start; gap:12px; background:#fff; border:1px solid #007F42; border-left:4px solid #007F42; border-radius:4px; padding:12px; width:fit-content; max-width:100%; margin:0 auto 16px; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+  .toast-banner img.status { width:20px; height:20px; margin-top:1px; }
+  .toast-banner span.msg { font-size:14px; font-weight:600; color:var(--color-text-default); }
+  .toast-banner img.close { width:16px; height:16px; opacity:.6; margin-left:8px; cursor:pointer; }
+</style>
+</head>
+<body data-active-nav="add-on-management">
+<div id="app-header"></div>
+<div class="app-body">
+  <div id="app-sidenav"></div>
+  <main class="content-area">
+
+    <div id="toast-s4" class="toast-banner stage-toast" data-for="s4" style="display:none;">
+      <img class="status" src="../assets/wizard/icon-check-circle.svg" alt="" />
+      <span class="msg">Confirmation email sent.</span>
+      <img class="close" src="../assets/wizard/icon-close.svg" alt="" />
+    </div>
+    <div id="toast-s5" class="toast-banner stage-toast" data-for="s5" style="display:none;">
+      <img class="status" src="../assets/wizard/icon-check-circle.svg" alt="" />
+      <span class="msg">Forwarding email verification successful.</span>
+      <img class="close" src="../assets/wizard/icon-close.svg" alt="" />
+    </div>
+
+    <div class="breadcrumb">
+      <a href="../screens/home-connected.html">Add-on management</a>
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+      <span class="crumb-current">Connect provider</span>
+    </div>
+
+    <div class="wizard-shell">
+      <ul class="step-tracker">
+        <li class="done"><span class="dot"></span><span class="step-label">Bill providers<span class="step-status">Success</span></span></li>
+        <li class="current"><span class="dot">2</span><span class="step-label">Connect to bill provider<span class="step-status">In progress</span></span></li>
+        <li><span class="dot">3</span><span class="step-label">Master vendor</span></li>
+        <li><span class="dot">4</span><span class="step-label">Enroll accounts</span></li>
+      </ul>
+
+      <div class="wizard-main">
+        <h1>Connect to PSE&amp;G</h1>
+        <p class="wizard-intro">Configure authentication</p>
+
+        <div class="wizard-body">
+
+          <!-- Stage s1 - Figma "4" (7002:19244): forwarding-email dropdown, closed/default -->
+          <div class="stage active" id="stage-s1">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forward emails to
+                      <span class="tt" tabindex="0">
+                        <img class="tt-icon" src="../assets/wizard/icon-info.svg" alt="" />
+                        <span class="tt-bubble">This must be an AvidXchange email address that can receive the provider's verification emails.</span>
+                      </span>
+                    </label>
+                    <div class="dropdown-field" onclick="showStage('s2'); return false;">
+                      <input type="text" readonly placeholder="Select email" />
+                      <img class="chevron" src="../assets/icons/chevron-right.svg" alt="" />
+                    </div>
+                  </div>
+                </div>
+                <a href="wizard-step-168.html" class="btn btn-tertiary">Select another method</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage s2 - Figma "4.0" (7002:19472): dropdown open, showing verified emails + "Add new email" -->
+          <div class="stage" id="stage-s2">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field">
+                    <label>Forwarding email to
+                      <span class="tt" tabindex="0">
+                        <img class="tt-icon" src="../assets/wizard/icon-info.svg" alt="" />
+                        <span class="tt-bubble">This must be an AvidXchange email address that can receive the provider's verification emails.</span>
+                      </span>
+                    </label>
+                    <div class="dropdown-field">
+                      <input type="text" id="s2-selected-value" readonly placeholder="Select email" />
+                      <img class="chevron" src="../assets/icons/chevron-right.svg" alt="" />
+                    </div>
+                    <div class="email-menu">
+                      <div class="menu-add" onclick="showStage('s3'); return false;">+ Add new email</div>
+                      <label class="menu-check"><input type="checkbox" onchange="selectExistingEmail(this, 'management@nextrealty.com')" /> management@nextrealty.com</label>
+                      <label class="menu-check"><input type="checkbox" onchange="selectExistingEmail(this, 'Property1@nextrealty.com')" /> Property1@nextrealty.com</label>
+                    </div>
+                  </div>
+                </div>
+                <a href="wizard-step-168.html" class="btn btn-tertiary">Select another method</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage s3 - Figma "4.0.1" (7002:19709): enter a new email address -->
+          <div class="stage" id="stage-s3">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field" style="margin-bottom:0;">
+                    <label>Forward emails to</label>
+                    <input type="email" id="s3-new-email" placeholder="Enter email address" oninput="validateNewEmail()" />
+                  </div>
+                </div>
+                <a href="wizard-step-168.html" class="btn btn-tertiary">Select another method</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage s4 - Figma "4.0.2" (7002:18883): verify one-time code, Toast component shown above -->
+          <div class="stage" id="stage-s4">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Verify email</h2>
+                <div class="alert-otp">
+                  <img src="../assets/wizard/icon-info.svg" alt="" />
+                  <div>
+                    <p class="otp-text">One time code sent to <strong id="s4-email-target"></strong>.</p>
+                    <span class="otp-resend disabled">Resend the code in 30s</span>
+                  </div>
+                </div>
+                <div class="stage-body">
+                  <div class="field" style="margin-bottom:0;">
+                    <label>One time code</label>
+                    <input type="text" id="s4-otp" oninput="validateOtp()" />
+                  </div>
+                </div>
+                <div class="stage-actions">
+                  <a href="#" class="btn btn-tertiary" onclick="showStage('s3'); return false;">Change email</a>
+                  <button type="button" class="btn btn-primary" id="s4-verify-btn" onclick="handleNext(); return false;">Verify</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage s5 - Figma "4.0.3" (7002:19649): success confirmation, Toast component shown above -->
+          <div class="stage" id="stage-s5">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Multi factor authentication</h2>
+                <div class="mfa-email-row">
+                  <img src="../assets/wizard/email-icon-large.svg" alt="" />
+                  <span class="mfa-email-title">Email</span>
+                </div>
+                <div class="mfa-desc-block">
+                  <p>Enter the email you would like to receive authentication codes to from AvidXchange.</p>
+                  <div class="field" style="margin-bottom:0;">
+                    <label>Forwarding email to</label>
+                    <div class="dropdown-field">
+                      <input type="text" id="s5-confirmed-email" readonly />
+                      <img class="chevron" src="../assets/icons/chevron-right.svg" alt="" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage s6 - Figma "4.0.4" (7002:18994): change MFA email at the provider, final confirmation of this sub-flow -->
+          <div class="stage" id="stage-s6">
+            <div class="mfa-panel">
+              <div class="mfa-card">
+                <h2>Change your MFA email</h2>
+                <div class="stage-body">
+                  <ol class="mfa-steps">
+                    <li>Sign in to <a class="ext-link" href="#" onclick="return false;">PSE&amp;G <img src="../assets/wizard/icon-external-link.svg" alt="" /></a></li>
+                    <li>In the portal, navigate to account or security settings</li>
+                    <li>Set the MFA contact to the avid provided email below.</li>
+                  </ol>
+                  <div class="copy-field">
+                    <span>{{generated}}@mfa.avidbill.com</span>
+                    <img src="../assets/wizard/icon-copy.svg" alt="" />
+                  </div>
+                  <ol class="mfa-steps" start="4">
+                    <li>Once you have confirmed the change click next</li>
+                  </ol>
+                  <label class="mfa-checkbox">
+                    <input type="checkbox" onchange="onMfaConfirmToggle(this)" />
+                    <span>I have updated MFA email to the AvidXchange provided email</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wizard-footer">
+          <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
+          <div style="display:flex; gap:8px;">
+            <a href="../screens/wizard-step-168.html" class="btn btn-secondary">Back</a>
+            <a href="#" id="btn-next" class="btn btn-primary" onclick="return handleNext();">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/chrome.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  // Stage config: each stage's Next behavior. { stage: 'sX' } advances internally,
+  // { href: 'url' } is a real page navigation. null means Next has nothing to do yet
+  // (disabled) until the stage's own interaction (dropdown pick / checkbox) sets it.
+  var STAGE_CONFIG = {
+    s1: { next: null, label: 'Next', disabled: true },
+    s2: { next: null, label: 'Next', disabled: true },
+    s3: { next: { stage: 's4' }, label: 'Next', disabled: true },
+    s4: { next: { stage: 's5' }, label: 'Verify', disabled: true },
+    s5: { next: { stage: 's6' }, label: 'Continue', disabled: false },
+    s6: { next: null, label: 'Next', disabled: true }
+  };
+
+  var newEmailValue = '';
+
+  function showStage(id) {
+    document.querySelectorAll('.stage').forEach(function (el) { el.classList.remove('active'); });
+    document.getElementById('stage-' + id).classList.add('active');
+    document.querySelectorAll('.stage-toast').forEach(function (el) { el.style.display = (el.dataset.for === id) ? 'flex' : 'none'; });
+    var cfg = STAGE_CONFIG[id];
+    var btn = document.getElementById('btn-next');
+    btn.textContent = cfg.label;
+    btn.dataset.stage = id;
+    if (cfg.disabled) { btn.setAttribute('aria-disabled', 'true'); } else { btn.removeAttribute('aria-disabled'); }
+  }
+
+  function selectExistingEmail(checkbox, email) {
+    document.querySelectorAll('#stage-s2 .menu-check input').forEach(function (cb) {
+      if (cb !== checkbox) cb.checked = false;
+    });
+    document.getElementById('s2-selected-value').value = checkbox.checked ? email : '';
+    if (checkbox.checked) {
+      STAGE_CONFIG.s2.next = { href: 'wizard-login-credentials.html' };
+      STAGE_CONFIG.s2.disabled = false;
+    } else {
+      STAGE_CONFIG.s2.next = null;
+      STAGE_CONFIG.s2.disabled = true;
+    }
+    showStage('s2');
+  }
+
+  function validateNewEmail() {
+    var val = document.getElementById('s3-new-email').value;
+    newEmailValue = val;
+    var ok = /\S+@\S+\.\S+/.test(val);
+    STAGE_CONFIG.s3.disabled = !ok;
+    var btn = document.getElementById('btn-next');
+    if (btn.dataset.stage === 's3') {
+      if (ok) { btn.removeAttribute('aria-disabled'); } else { btn.setAttribute('aria-disabled', 'true'); }
+    }
+  }
+
+  function validateOtp() {
+    var val = document.getElementById('s4-otp').value;
+    var ok = val.trim().length > 0;
+    STAGE_CONFIG.s4.disabled = !ok;
+    var btn = document.getElementById('btn-next');
+    if (btn.dataset.stage === 's4') {
+      if (ok) { btn.removeAttribute('aria-disabled'); } else { btn.setAttribute('aria-disabled', 'true'); }
+    }
+  }
+
+  function onMfaConfirmToggle(checkbox) {
+    STAGE_CONFIG.s6.disabled = !checkbox.checked;
+    STAGE_CONFIG.s6.next = checkbox.checked ? { href: 'wizard-login-credentials.html' } : null;
+    var btn = document.getElementById('btn-next');
+    if (btn.dataset.stage === 's6') {
+      if (checkbox.checked) { btn.removeAttribute('aria-disabled'); } else { btn.setAttribute('aria-disabled', 'true'); }
+    }
+  }
+
+  function handleNext() {
+    var id = document.getElementById('btn-next').dataset.stage || 's1';
+    var cfg = STAGE_CONFIG[id];
+    if (cfg.disabled || !cfg.next) return false;
+    if (id === 's3') {
+      document.getElementById('s4-email-target').textContent = newEmailValue || 'your email';
+    }
+    if (id === 's4') {
+      document.getElementById('s5-confirmed-email').value = newEmailValue || '';
+    }
+    if (cfg.next.href) {
+      window.location.href = cfg.next.href;
+    } else {
+      showStage(cfg.next.stage);
+    }
+    return false;
+  }
+
+  showStage('s1');
+</script>
+</body>
+</html>

@@ -1,70 +1,51 @@
 {
   "figmaFileKey": "Ei3vesaWdzL7bKm5sc03Jo",
   "figmaFileName": "End to End Prototype",
-  "lastUpdated": "2026-09-26",
-  "notes": "Regenerated after a designer update added two new flows (Priority Payments enrollment, Invoice & Pay) and asked for the 'lettered route' wizard screens (A/B/C/D/E) to be collapsed from many separate pages into 5 single-page flows with in-page stage switching. See README.md for the full rationale and judgment calls.",
+  "lastUpdated": "2026-09-28",
+  "notes": "Regenerated after the designer reorganized the Figma file with clean sequential frame numbers ('1', '2', '4.1', '15.1.1', etc.) and gave numbered interaction instructions, plus asked to follow the 'Lydia' design system strictly. This update REPLACED most of the CBR wizard's middle section — many frames from the previous round (routes A/B/C/D/E, the old Enroll Accounts 1-7, Master vendor 103, the external-site mock) no longer exist in the Figma file at all and were deleted. The flow is now much shorter (17 screens total, down from 29).",
   "flows": {
     "connectedBillRetrieval": {
-      "description": "AvidXchange Add-on Management > Connected Bill Retrieval. Home screens + the 'Connect provider' wizard (4 stages: Bill providers, Connect to bill provider, Master vendor, Enroll accounts).",
+      "description": "AvidXchange Add-on Management > Connected Bill Retrieval. Home + the 'Connect provider' wizard.",
       "screens": [
-        { "slug": "home-empty", "role": "First-time/empty entry point (also index.html). 'Connect provider' -> wizard-search-provider.html" },
-        { "slug": "home-validated-credentials", "role": "Manage > Validated credentials view, reached from any home-* screen" },
-        { "slug": "home-credentials-pending", "role": "Manage > Credentials pending view" },
-        { "slug": "home-connected", "figmaNode": "7002:31205 / 7026:22404 (updated 'End of CBR begin PP')", "role": "Canonical Home once at least one provider is connected. Now has a real 5-row provider table AND a functional 'Priority Payments' tab (in-page tab switch, no navigation) whose 'Set Up' links start the PP enrollment flow -> pp-select-vendor.html. This is also where the CBR wizard loops back to when finished." },
-        { "slug": "home-connected-alt", "role": "Near-duplicate reference variant, linked only from home-connected.html" },
-        { "slug": "home-connected-v3", "role": "Near-duplicate reference variant, linked only from home-connected.html" },
-
-        { "slug": "wizard-search-provider", "role": "Wizard stage 1 (Bill providers). Next -> wizard-step-168.html. Cancel -> home-connected.html" },
-        { "slug": "wizard-step-168", "role": "Stage 2 starts. Next -> wizard-route-a.html" },
-
-        { "slug": "wizard-route-a", "role": "CONSOLIDATED single page, 9 in-page stages (forwarding-email start, its branch, verify-email 1/1.2/1.2-alt with their 'already verified'/'invalid email' branches). Back -> wizard-step-168.html. Cancel -> home-connected.html (every stage). Last stage's Next -> wizard-route-b.html" },
-        { "slug": "wizard-route-b", "role": "CONSOLIDATED, 4 stages (verify-email 1B/2B/3B + 'action failed' branch). Back -> wizard-route-a.html. Cancel -> home-connected.html. Next -> wizard-route-c.html" },
-        { "slug": "wizard-route-c", "role": "CONSOLIDATED, 2 stages (steps 171/177, gated by an MFA-email checkbox). 'Sign in to PSE&G' -> wizard-step-177d-external.html (real page nav, kept separate). Back -> wizard-route-b.html. Cancel -> home-connected.html. Next -> wizard-route-e.html (NOTE: route D comes AFTER E, not before)" },
-        { "slug": "wizard-step-177d-external", "role": "Mocked external bill-provider site. Per the designer's instruction, clicking ANYWHERE on the page -> wizard-route-e.html" },
-        { "slug": "wizard-route-e", "role": "CONSOLIDATED, 4 stages (login form empty -> filled -> submitting -> pending, steps 86E-89E). Back -> wizard-route-c.html. Cancel -> home-connected.html. Next -> wizard-route-d.html" },
-        { "slug": "wizard-route-d", "role": "1:1 replacement of the old wizard-step-90d.html, renamed for the route scheme (single stage, no consolidation needed). Back -> wizard-route-e.html. Cancel -> home-connected.html. 'Save & Exit' -> wizard-master-vendor-102.html" },
-
-        { "slug": "wizard-master-vendor-102", "role": "Wizard stage 3 (Master vendor). Next -> wizard-master-vendor-103.html" },
-        { "slug": "wizard-master-vendor-103", "role": "Next -> wizard-enroll-accounts-1.html" },
-        { "slug": "wizard-enroll-accounts-1", "role": "Wizard stage 4 (Enroll accounts). Next -> ...2 -> ...3 -> ...4 -> ...7" },
-        { "slug": "wizard-enroll-accounts-7", "role": "Last CBR wizard screen. Primary CTA -> home-connected.html, closing the loop." }
+        { "slug": "home-empty / index.html", "figmaFrame": "1", "figmaNode": "7012:9513", "role": "True entry point. Manage side-card items (everything except the active 'Providers') are NOT clickable anymore, hover-highlight only. 'Connect provider' -> wizard-search-provider.html" },
+        { "slug": "wizard-search-provider", "figmaFrame": "2", "figmaNode": "7002:19140", "role": "Results table hidden until 'Search' is clicked; 'Next' disabled until the table is showing and a row is selected. Cancel -> home-empty.html. Next -> wizard-step-168.html" },
+        { "slug": "wizard-step-168", "figmaFrame": "3", "figmaNode": "7002:18745", "role": "Authentication method picker. If 'MFA not enabled' is chosen -> skips directly to wizard-login-credentials.html. Otherwise -> wizard-forward-email.html" },
+        { "slug": "wizard-forward-email", "figmaFrame": "4 / 4.0 / 4.0.1-4.0.4", "figmaNode": "7002:19244 (+ 5 more, consolidated)", "role": "CONSOLIDATED single page. 'Forward emails to' dropdown lists a few real emails plus '+ Add new email'. Picking an existing email -> stage 4.0 -> Next -> wizard-login-credentials.html. Picking 'Add new email' -> 4 more in-page stages (enter email, verify code, success toast, confirm) -> same target. Back -> wizard-step-168.html. Cancel (every stage) -> home-connected.html" },
+        { "slug": "wizard-login-credentials", "figmaFrame": "4.1-4.1.4", "figmaNode": "7002:18478 (+3 more, consolidated)", "role": "CONSOLIDATED single page, 4 stages: empty login form -> filled -> submitting -> pending/done. Reachable both from wizard-forward-email.html and directly from wizard-step-168.html ('MFA not enabled' skip). Back -> wizard-forward-email.html. Cancel -> home-connected.html. Last stage's primary action -> wizard-master-vendor-102.html" },
+        { "slug": "wizard-master-vendor-102", "figmaFrame": "5", "figmaNode": "7002:28535", "role": "Multi-select vendor table (checking one does NOT uncheck others — user can pick several). Back -> wizard-login-credentials.html. Next -> wizard-enroll-accounts.html" },
+        { "slug": "wizard-enroll-accounts", "figmaFrame": "6 / 6.1 / 6.2", "figmaNode": "7002:26659 (+2 more, consolidated)", "role": "CONSOLIDATED single page. Base state ('6'): account rows each with a 'Link' button. Clicking one opens an in-page modal ('6.1': single-select radio table of vendor accounts + a Billing cycle select with exactly Monthly/Weekly/Yearly). Confirming the modal closes it and switches the row to 'linked' + enables the page's own Enroll button ('6.2'). Back -> wizard-master-vendor-102.html. Cancel/Save & Exit -> home-connected.html. Enroll -> wizard-confirmation.html" },
+        { "slug": "wizard-confirmation", "figmaFrame": "7", "figmaNode": "7047:28205", "role": "Final confirmation modal ('Enroll account(s)', with a duplicate-invoice warning). Confirming -> home-connected.html, closing the CBR loop." },
+        { "slug": "home-connected", "figmaFrame": "8", "figmaNode": "7026:22404", "role": "Same Home screen, now-connected state (5-provider table). Same 'Manage items non-clickable, hover-only' treatment as home-empty.html, applied consistently even though the designer's instruction named Frame 1 specifically (judgment call — same UI pattern, different data state). The top TABS strip ('Connected bill retrieval' / 'Priority Payments') is a SEPARATE element from the Manage side-card and remains fully functional — it's the only way into the PP flow." }
       ],
       "deletedInThisUpdate": [
-        "wizard-forwarding-email-start.html", "wizard-step-182.html", "wizard-verify-email-1a.html",
-        "wizard-emails-already-verified-1.html", "wizard-verify-email-1-2a.html", "wizard-emails-already-verified-2.html",
-        "wizard-verify-email-1-2a-alt.html", "wizard-invalid-email.html", "wizard-emails-already-verified-3.html",
-        "wizard-verify-email-1b.html", "wizard-verify-email-2b.html", "wizard-verify-email-3b.html",
-        "wizard-action-failed-verify.html", "wizard-step-171c.html", "wizard-step-177c.html",
-        "wizard-step-86e.html", "wizard-step-87e.html", "wizard-step-88e.html", "wizard-step-89e.html",
-        "wizard-step-90d.html (renamed to wizard-route-d.html)"
+        "home-connected-alt.html", "home-connected-v3.html", "home-validated-credentials.html", "home-credentials-pending.html",
+        "wizard-route-a.html", "wizard-route-b.html", "wizard-route-c.html", "wizard-route-d.html", "wizard-route-e.html", "wizard-step-177d-external.html",
+        "wizard-master-vendor-103.html", "wizard-enroll-accounts-1.html", "wizard-enroll-accounts-2.html", "wizard-enroll-accounts-3.html", "wizard-enroll-accounts-4.html", "wizard-enroll-accounts-7.html"
       ]
     },
     "priorityPaymentsEnrollment": {
-      "description": "NEW flow added by the designer. Entered from home-connected.html's Priority Payments tab ('Set Up'). A 5-stage 'Set Up Payments' wizard: Select Vendor account, Confirm Address, Select Funding Account, Set Priority Payment Rules, Review and Enroll.",
+      "description": "Entered from home-connected.html's Priority Payments TAB (not the Manage side-card's non-clickable shortcut). A 5-stage 'Set Up Payments' wizard, unchanged in structure from the previous round — only interaction precision fixes this round.",
       "screens": [
-        { "slug": "pp-select-vendor", "figmaNode": "7026:22241 (PP Enrollment 2)", "role": "Stage 1. Single-select checkbox table (checking one unchecks the rest) per the designer's explicit instruction. Cancel -> home-connected.html. Next -> pp-confirm-address.html" },
-        { "slug": "pp-confirm-address", "figmaNode": "7026:23690 / 7026:25992 / 7026:33932 (folded)", "role": "Stage 2. CONSOLIDATED: confirm -> validating (auto-advances) -> validated, all one page. Inline address editing in place of a modal (see README). Back -> pp-select-vendor.html. Next -> pp-select-funding.html" },
-        { "slug": "pp-select-funding", "figmaNode": "7026:33659 + side sheet 7026:33781", "role": "Stage 3. Funding account cards; 'View account info' opens a real in-page side sheet. Next -> pp-payment-rules.html" },
-        { "slug": "pp-payment-rules", "figmaNode": "7026:35212 cluster (7A-7.4A) + side sheet 7026:38198", "role": "Stage 4. CONSOLIDATED into one live form: real toggle switches + a real workflow <select>, not separate stage screens (closer to the designer's 'actions inside like drop down, button able/disabled' instruction than static panels). Next -> pp-review-enroll.html" },
-        { "slug": "pp-review-enroll", "figmaNode": "7026:48653", "role": "Stage 5. Review summary; 'Enroll' opens an in-page confirmation modal ('Enroll N account(s)'). Confirming -> home-connected.html, closing the loop." }
+        { "slug": "pp-select-vendor", "figmaFrame": "10", "role": "Single-select checkbox table. Cancel -> home-connected.html. Next -> pp-confirm-address.html" },
+        { "slug": "pp-confirm-address", "figmaFrame": "11 / 12 / 13", "role": "CONSOLIDATED: confirm -> validating (now a REAL 7-second wait per explicit designer spec, was ~1.2s) -> validated. Next -> pp-select-funding.html" },
+        { "slug": "pp-select-funding", "figmaFrame": "14 / 14.1", "role": "Funding account cards are now single-select (click a card to select it; only one at a time). 'View account info' independently opens the side sheet without disturbing selection. Next -> pp-payment-rules.html" },
+        { "slug": "pp-payment-rules", "figmaFrame": "15 / 15.1-15.4 / 15.1.1", "role": "Live form. Confirmed exact triggers: the APPROVAL WORKFLOW toggle (not Auto Initiate) reveals the 15.1+ states; 'See workflow' opens the 15.1.1 side sheet. Next -> pp-review-enroll.html" },
+        { "slug": "pp-review-enroll", "figmaFrame": "16 (unnamed)", "role": "Review summary + 'Enroll N account(s)' modal. Confirming -> home-connected.html" }
       ],
-      "outOfScope": "The 'Edit Enrollment' / 'Edit behavior' / 'Add memo' side-sheet variants (Figma nodes 7026:43892, 7026:44155, 7026:44418) belong to a separate 'manage an already-enrolled vendor later' side-flow and were not built — flagged for a future pass if needed."
+      "outOfScope": "The 'Edit Enrollment' / 'Edit behavior' / 'Add memo' side-sheet variants inside Payment Rules remain out of scope (unchanged from last round)."
     },
     "invoiceAndPay": {
-      "description": "NEW flow added by the designer — a different product area (AvidInvoice / AvidPay) with its own header + icon-only sidenav, not the Add-on Management chrome. Its own chrome lives in js/chrome-invoice.js.",
+      "description": "Unchanged this round. AvidInvoice / AvidPay area with its own chrome (js/chrome-invoice.js).",
       "screens": [
-        { "slug": "invoice-home", "figmaNode": "7034:51158", "role": "Shared start anchor. Invoice queue with Pending Approval/Disputed/Time Sensitive tabs. 3 rows link to the 3 example scenarios via invoice-detail.html?scenario=..." },
-        { "slug": "invoice-detail", "figmaNode": "7034:52272 (fine) / 7034:56731 (anomaly) / 7034:57925 (no-stp), consolidated", "role": "ONE page whose banner/copy is driven by ?scenario=fine|anomaly|no-stp (read from location.search). Includes an 'Auto-initiate payments' toggle that opens an in-page modal (consolidates 2 near-duplicate Figma overlay frames, nodes 7034:56866/7034:58060). Submit -> pay-home.html for all 3 scenarios." },
-        { "slug": "pay-home", "figmaNode": "7034:53351", "role": "Shared end anchor. AvidPay batches table. Per the designer's explicit instruction: clicking the 'Invoice' icon in its sidenav -> invoice-home.html." }
+        { "slug": "invoice-home", "role": "Shared start anchor." },
+        { "slug": "invoice-detail", "role": "One page, ?scenario=fine|anomaly|no-stp." },
+        { "slug": "pay-home", "role": "Shared end anchor. Sidenav 'Invoice' icon -> invoice-home.html" }
       ]
     }
   },
   "conventions": {
-    "stageConsolidationPattern": "Where several Figma frames are really just different states of one screen (dropdown open, toggle on/off, validating -> validated, etc.), they're built as ONE HTML file with .stage/.stage.active panels (or, where the states are truly just form control states, as one live form with real toggles/selects) switched by a small inline <script> — never as separate page navigations. This same pattern is used for: wizard-route-a/b/c/e.html, pp-confirm-address.html, pp-payment-rules.html, and invoice-detail.html.",
-    "everyScreenMustInclude": [
-      "<link rel=\"stylesheet\" href=\"../css/shared.css\">",
-      "Either the Add-on Management chrome (chrome.js + data-active-nav) or, for the Invoice & Pay flow, chrome-invoice.js",
-      "A 'Back'/'Cancel' pair that follows the rules described per screen above"
-    ]
+    "lydiaDesignSystem": "This Figma file has 'Lydia' (Components/Foundations/Patterns/Lo-Fi Kit) as its linked design system library — it's the source of the colors/typography/component tokens get_design_context has been returning all along. 'Follow Lydia strictly' means: use the exact hex/font values design context returns rather than approximating, and prefer existing shared.css classes/tokens (already extracted from Lydia) over inventing new ones.",
+    "stageConsolidationPattern": "Where several Figma frames are really just different states of one screen, they're built as ONE HTML file with .stage/.stage.active panels (or a live form with real toggles/selects) switched by inline <script>, never separate page navigations. Used in: wizard-forward-email.html, wizard-login-credentials.html, wizard-enroll-accounts.html, pp-confirm-address.html, pp-payment-rules.html, invoice-detail.html.",
+    "manageMenuHoverOnly": "The 'Manage' side-card's non-active items (Validated credentials, Credentials pending, Priority Payments-shortcut, Errors, Notifications, Requested Providers) are decorative: <span class=\"nav-item\"> with the existing :hover CSS, no href/onclick. This applies on both home-empty.html and home-connected.html. Do NOT confuse this with the top TABS strip on home-connected.html, which is a different element and remains fully functional."
   }
 }

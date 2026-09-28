@@ -65,31 +65,33 @@
             <div class="field field-input">
               <input type="text" value="nj.pseg.com" />
             </div>
-            <button type="button" class="btn btn-secondary">Search</button>
+            <button type="button" class="btn btn-secondary" id="search-btn">Search</button>
           </div>
 
-          <table class="provider-table">
-            <thead>
-              <tr><th></th><th>Bill provider</th><th>Login URL</th></tr>
-            </thead>
-            <tbody>
-              <tr class="selected">
-                <td class="radio-cell"><input type="radio" name="bill-provider" checked /></td>
-                <td>PSE&amp;G</td>
-                <td>https://www.nj.pseg.com/</td>
-              </tr>
-              <tr>
-                <td class="radio-cell"><input type="radio" name="bill-provider" /></td>
-                <td>PSE&amp;G 2</td>
-                <td>https://www.nj.pseg.com/</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="stage" id="results-stage">
+            <table class="provider-table">
+              <thead>
+                <tr><th></th><th>Bill provider</th><th>Login URL</th></tr>
+              </thead>
+              <tbody>
+                <tr class="selected">
+                  <td class="radio-cell"><input type="radio" name="bill-provider" checked /></td>
+                  <td>PSE&amp;G</td>
+                  <td>https://www.nj.pseg.com/</td>
+                </tr>
+                <tr>
+                  <td class="radio-cell"><input type="radio" name="bill-provider" /></td>
+                  <td>PSE&amp;G 2</td>
+                  <td>https://www.nj.pseg.com/</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="wizard-footer">
           <a href="../screens/home-connected.html" class="btn btn-tertiary">&larr; Cancel</a>
-          <a href="wizard-step-168.html" class="btn btn-primary">Next</a>
+          <button type="button" id="next-btn" class="btn btn-primary" disabled aria-disabled="true">Next</button>
         </div>
       </div>
     </div>
@@ -98,6 +100,22 @@
 <script src="../js/chrome.js"></script>
 <script src="../js/app.js"></script>
 <script>
+  var resultsStage = document.getElementById('results-stage');
+  var nextBtn = document.getElementById('next-btn');
+
+  function updateNextState() {
+    var stageVisible = resultsStage.classList.contains('active');
+    var rowSelected = !!document.querySelector('.provider-table input[type=radio]:checked');
+    var enabled = stageVisible && rowSelected;
+    nextBtn.disabled = !enabled;
+    nextBtn.setAttribute('aria-disabled', String(!enabled));
+  }
+
+  document.getElementById('search-btn').addEventListener('click', function () {
+    resultsStage.classList.add('active');
+    updateNextState();
+  });
+
   document.querySelectorAll('.provider-table tbody tr').forEach(function (row) {
     row.addEventListener('click', function () {
       var radio = row.querySelector('input[type=radio]');
@@ -106,8 +124,16 @@
       document.querySelectorAll('.provider-table tbody tr').forEach(function (r) {
         r.classList.toggle('selected', r.querySelector('input[type=radio]').checked);
       });
+      updateNextState();
     });
   });
+
+  nextBtn.addEventListener('click', function () {
+    if (nextBtn.disabled) return;
+    location.href = 'wizard-step-168.html';
+  });
+
+  updateNextState();
 </script>
 </body>
 </html>

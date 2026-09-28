@@ -4,12 +4,16 @@
 <meta charset="UTF-8" />
 <title>Connected Bill Retrieval - AvidXchange</title>
 <link rel="stylesheet" href="../css/shared.css" />
+<style>
+  .page-heading { font-size: 28px; font-weight: 500; margin: 0 0 4px; color: var(--color-text-default); }
+</style>
 </head>
 <body data-active-nav="add-on-management">
 <div id="app-header"></div>
 <div class="app-body">
   <div id="app-sidenav"></div>
   <main class="content-area">
+    <p class="page-heading">Add-on management</p>
     <div class="breadcrumb">
       <a href="#">Add - on Management</a>
       <img src="../assets/icons/chevron-right.svg" alt="" />
@@ -24,9 +28,9 @@
     <div class="card manage-card">
       <div class="manage-nav">
         <h2>Manage</h2>
-        <a href="home-empty.html" class="nav-item active">Connected providers</a>
-        <a href="home-validated-credentials.html" class="nav-item">Validated credentials</a>
-        <a href="home-credentials-pending.html" class="nav-item">Credentials pending</a>
+        <a href="home-empty.html" class="nav-item active">Providers</a>
+        <span class="nav-item">Validated credentials</span>
+        <span class="nav-item">Credentials pending</span>
         <span class="nav-item">Errors</span>
         <span class="nav-item">Notifications</span>
         <span class="nav-item">Requested Providers <span class="pill-soon">Coming soon</span></span>
@@ -43,10 +47,28 @@
           <a class="btn btn-primary" href="../screens/wizard-search-provider.html">Connect provider</a>
         </div>
 
-        <div class="empty-state">
-          <h3>No connections yet</h3>
-          <p>After connecting a provider, you'll find it here it here.</p>
-        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Bill provider</th><th>URL</th><th>Accounts enrolled</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="#">Charlotte Water</a></td>
+              <td>https://www.charlotte.water.com/</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td><a href="#">Duke Energy</a></td>
+              <td>https://www.duke-energy.com/</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td><a href="#">Franklin County Water Authority</a></td>
+              <td>https://www.fcwa.org/</td>
+              <td>4</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </main>
