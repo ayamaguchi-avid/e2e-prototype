@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Connected Payments Demo Script</title>
+<style>
+  /* ---- design plan ----
+     Color: AvidXchange brand tokens (blue #1e85ff primary, navy #0a2e57 for
+       anchor moments, ink #081b35 body text, slate neutrals, semantic
+       green/coral/yellow for the three acts).
+     Type: Poppins throughout (the brand's authentic face) — 600/700 for
+       headings and labels, 400 for reading text and quoted dialogue.
+     Layout: a single scrolling run-of-show — a pitch band, a jump menu,
+       three color-coded acts each as a numbered DO/SAY sequence, a close,
+       and a quick-reference strip pinned at the very bottom. */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fb;
+    --bg-card: #ffffff;
+    --fg: #081b35;
+    --muted: #5a6473;
+    --border: #e0e3e8;
+    --accent: #1e85ff;
+    --accent-hover: #0f5bd6;
+    --navy: #0a2e57;
+    --act1: #1e85ff;
+    --act1-surface: #e7f1ff;
+    --act2: #00966b;
+    --act2-surface: #e0f8ef;
+    --act3: #d9791f;
+    --act3-surface: #fff5de;
+    --danger-surface: #ffe6df;
+    --danger-text: #b23c1f;
+    --shadow-card: 0 8px 24px rgba(8, 27, 53, 0.08);
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --radius-pill: 999px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1220;
+      --bg-subtle: #111a2c;
+      --bg-card: #131c30;
+      --fg: #eaf0fb;
+      --muted: #93a1bd;
+      --border: #253453;
+      --accent: #59a5ff;
+      --accent-hover: #93c4ff;
+      --navy: #16233d;
+      --act1-surface: #16233d;
+      --act2-surface: #0f2a24;
+      --act3-surface: #2c220f;
+      --danger-surface: #301813;
+      --danger-text: #ff9d84;
+      --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1220;
+    --bg-subtle: #111a2c;
+    --bg-card: #131c30;
+    --fg: #eaf0fb;
+    --muted: #93a1bd;
+    --border: #253453;
+    --accent: #59a5ff;
+    --accent-hover: #93c4ff;
+    --navy: #16233d;
+    --act1-surface: #16233d;
+    --act2-surface: #0f2a24;
+    --act3-surface: #2c220f;
+    --danger-surface: #301813;
+    --danger-text: #ff9d84;
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0 16px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding-block: 32px 64px; }
+
+  h1, h2, h3 { font-weight: 700; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(26px, 5vw, 34px); color: #fff; }
+  h2 { font-size: 22px; margin-bottom: 4px; }
+  h3 { font-size: 15px; font-weight: 600; }
+  p { margin: 0; }
+
+  a { color: var(--accent); }
+
+  /* ---- hero / pitch band ---- */
+  .hero {
+    background: linear-gradient(135deg, var(--navy), #123a6b);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 28px 28px 24px;
+    margin-top: 24px;
+  }
+  .hero .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9cc4ff;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .hero .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #cfe1ff;
+  }
+  .hero .meta a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  .hero .meta strong { color: #fff; font-weight: 600; }
+
+  .pitch-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-top: 18px;
+    font-size: 15px;
+    color: #f0f5ff;
+  }
+  .pitch-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #9cc4ff; font-weight: 600; display: block; margin-bottom: 6px; }
+
+  /* ---- short-on-time box ---- */
+  .shorttime {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-top: 20px;
+  }
+  .shorttime h3 { margin-bottom: 8px; }
+  .shorttime ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--fg); }
+  .shorttime li { margin-bottom: 4px; }
+  .shorttime .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+
+  /* ---- jump nav ---- */
+  .jumpnav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .jumpnav a {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    background: var(--bg-card);
+  }
+  .jumpnav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---- act sections ---- */
+  .act {
+    margin-top: 40px;
+    scroll-margin-top: 16px;
+  }
+  .act-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--act-color, var(--accent));
+  }
+  .act-num {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--act-color, var(--accent));
+  }
+  .act-why {
+    margin-top: 10px;
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+  .act[data-act="1"] { --act-color: var(--act1); }
+  .act[data-act="2"] { --act-color: var(--act2); }
+  .act[data-act="3"] { --act-color: var(--act3); }
+
+  .steps { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+  .step {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .step-num {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--act-color, var(--accent));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .step-body { min-width: 0; }
+  .do-line {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .do-line .jumplink {
+    font-weight: 500;
+    font-size: 12px;
+    margin-left: 8px;
+    text-decoration: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 2px 10px;
+    white-space: nowrap;
+  }
+  .do-line .jumplink:hover { color: var(--accent); border-color: var(--accent); }
+  .say {
+    margin-top: 8px;
+    background: var(--act-surface, var(--bg-subtle));
+    border-left: 3px solid var(--act-color, var(--accent));
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 14px;
+    font-size: 14.5px;
+    font-style: italic;
+    color: var(--fg);
+  }
+  .act[data-act="1"] .say { --act-surface: var(--act1-surface); }
+  .act[data-act="2"] .say { --act-surface: var(--act2-surface); }
+  .act[data-act="3"] .say { --act-surface: var(--act3-surface); }
+  .say .label { display: block; font-size: 10.5px; font-style: normal; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--act-color, var(--accent)); margin-bottom: 4px; }
+  .note {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .note strong { color: var(--fg); }
+
+  .payoff {
+    margin-top: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  .payoff .label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--act-color, var(--accent)); display: block; margin-bottom: 4px; }
+
+  /* ---- close ---- */
+  .close {
+    margin-top: 44px;
+    background: linear-gradient(135deg, var(--navy), #123a6b);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+  }
+  .close h2 { color: #fff; }
+  .close p { margin-top: 10px; font-size: 15px; color: #dce8ff; }
+  .close .ask { margin-top: 14px; font-size: 15px; font-style: italic; color: #fff; border-left: 3px solid #9cc4ff; padding-left: 14px; }
+
+  /* ---- objections ---- */
+  .objections {
+    margin-top: 40px;
+  }
+  .objection {
+    background: var(--danger-surface);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 14px;
+  }
+  .objection .q { font-weight: 600; color: var(--danger-text); }
+  .objection .a { margin-top: 4px; color: var(--fg); }
+
+  /* ---- quick reference table ---- */
+  .refs {
+    margin-top: 40px;
+    background: var(--bg-subtle);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px 24px;
+    border: 1px solid var(--border);
+  }
+  table.reflist { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
+  table.reflist th { text-align: left; padding: 6px 8px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  table.reflist td { padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.reflist tr:last-child td { border-bottom: none; }
+  table.reflist td.act-tag { white-space: nowrap; font-weight: 600; font-size: 12px; }
+  .reset-tip { margin-top: 18px; font-size: 13.5px; background: var(--bg-card); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .reset-tip code { background: var(--bg-subtle); padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+
+  footer { margin-top: 40px; font-size: 12.5px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 480px) {
+    .step { grid-template-columns: 28px 1fr; }
+    .step-num { width: 28px; height: 28px; font-size: 12px; }
+    .do-line .jumplink { display: block; margin: 6px 0 0; width: fit-content; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="kicker">Demo script — Connected Bill Retrieval → Priority Payments → Pay</span>
+    <h1>From twelve vendor logins to one connected, monitored, paid bill</h1>
+    <div class="meta">
+      <span>⏱ <strong>~9 min</strong> full walkthrough</span>
+      <span>🔗 <a href="https://ayamaguchi-avid.github.io/e2e-prototype/" target="_blank" rel="noopener">Open the live prototype</a></span>
+    </div>
+    <div class="pitch-box">
+      <span class="label">The 30-second pitch, before you click anything</span>
+      Today, most AP teams manually log into a dozen vendor portals every month just to find
+      bills — and even after they find them, getting them paid on time takes another set of
+      logins and follow-ups. What I'm about to show you is what happens when that entire chain —
+      retrieve, automate, approve, pay — lives in one connected system, with your team's judgment
+      built in at exactly the moments that matter, and nowhere else.
+    </div>
+  </div>
+
+  <div class="shorttime">
+    <span class="label">Short on time? Hit just these 8 moments</span>
+    <h3 style="margin-top:6px;">The 3-minute version</h3>
+    <ol>
+      <li>Home (empty) → <strong>Connect provider</strong> → search → select → Next</li>
+      <li>Pick an authentication method → Next (mention the MFA options, don't click through all of them)</li>
+      <li>Finish the wizard fast (email → login → vendor → enroll → confirm) and land back on the connected Home</li>
+      <li>Click the <strong>Priority Payments</strong> tab — point out every provider's status at a glance</li>
+      <li>Click <strong>Set Up</strong> on Comcast, skip straight to <strong>Payment Rules</strong> — toggle Approval Workflow on</li>
+      <li>Enroll → back on Home, Comcast now shows <strong>APPROVAL NEEDED</strong> — click it</li>
+      <li>On the Time Sensitive tab, approve the flagged invoice — show the warning banner, then "Got it!"</li>
+      <li>Land on AvidPay, click a batch row to show the proof-of-payment panel — end here</li>
+    </ol>
+  </div>
+
+  <nav class="jumpnav">
+    <a href="#act1">Act 1 — Connect</a>
+    <a href="#act2">Act 2 — Automate</a>
+    <a href="#act3">Act 3 — Approve &amp; get paid</a>
+    <a href="#objections">Tough questions</a>
+    <a href="#refs">Quick reference</a>
+  </nav>
+
+  <!-- ============================= ACT 1 ============================= -->
+  <section class="act" id="act1" data-act="1">
+    <div class="act-head">
+      <span class="act-num">Act 1</span>
+      <h2>Connect a bill provider</h2>
+    </div>
+    <p class="act-why">The pain: someone on the AP team is logging into this vendor's portal by
+      hand every billing cycle, just to find the PDF.</p>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <div class="do-line">Start on the empty Home screen.
+            <a class="jumplink" href="https://ayamaguchi-avid.github.io/e2e-prototype/" target="_blank" rel="noopener">open</a>
+          </div>
+          <div class="say"><span class="label">Say</span>"This is a brand-new account — nothing's connected yet. Watch how little it takes to fix that."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <div class="do-line">Click <strong>Connect provider</strong>, search by login URL, click <strong>Search</strong>, select the result, click <strong>Next</strong>.</div>
+          <div class="say"><span class="label">Say</span>"We search the way you already think about this vendor — by the URL you log into today."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <div class="do-line">On the authentication screen, pick <strong>Email</strong>, click <strong>Next</strong>.</div>
+          <div class="say"><span class="label">Say</span>"Every vendor secures their portal a little differently — email code, authenticator app, SMS, sometimes nothing at all. We handle whichever one you're handed."</div>
+          <p class="note">If asked about MFA-less providers: mention that path skips straight to the login step — no need to demo it live.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">4</span>
+        <div class="step-body">
+          <div class="do-line">Pick an email from the <strong>Forward emails to</strong> dropdown, click <strong>Next</strong>.</div>
+          <div class="say"><span class="label">Say</span>"One-time codes get forwarded straight into AvidXchange's secure inbox — nobody on your team babysits a shared mailbox waiting for a login code."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">5</span>
+        <div class="step-body">
+          <div class="do-line">Click <strong>Submit</strong> on the login form (twice — it fills demo credentials first), let it connect.</div>
+          <div class="say"><span class="label">Say</span>"We store this credential once, encrypted. This is the last time anyone types it."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">6</span>
+        <div class="step-body">
+          <div class="do-line">Check two or three vendors on the <strong>Master vendor selection</strong> screen, click <strong>Next</strong>.</div>
+          <div class="say"><span class="label">Say</span>"One login often covers several of your entities or accounts under this same provider — map all of them in one pass instead of repeating this setup."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">7</span>
+        <div class="step-body">
+          <div class="do-line">Click <strong>Link</strong> on a row, pick an account and billing cycle in the modal, click <strong>Link</strong>, then <strong>Enroll</strong>.</div>
+          <div class="say"><span class="label">Say</span>"You're confirming exactly how often this bill should sync before it ever goes live — no surprises."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">8</span>
+        <div class="step-body">
+          <div class="do-line">Confirm the enrollment modal, click <strong>Enroll</strong>.</div>
+          <div class="say"><span class="label">Say</span>"One click, and it's live."</div>
+        </div>
+      </li>
+    </ol>
+
+    <div class="payoff">
+      <span class="label">The payoff</span>
+      You're back on Home — and this provider (plus a few others already set up) now shows as
+      fully connected. Nobody will log into that portal again. Every future bill just shows up.
+    </div>
+  </section>
+
+  <!-- ============================= ACT 2 ============================= -->
+  <section class="act" id="act2" data-act="2">
+    <div class="act-head">
+      <span class="act-num">Act 2</span>
+      <h2>Turn on automated, time-sensitive payment</h2>
+    </div>
+    <p class="act-why">The pain: retrieving the bill doesn't pay it. Somebody still has to notice
+      it's due, decide how to pay it, and not miss the date.</p>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <div class="do-line">Click the <strong>Priority Payments</strong> tab.</div>
+          <div class="say"><span class="label">Say</span>"Here's every connected provider's payment status at a glance — who's fully automated, and who still needs setup."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <div class="do-line">Click <strong>Set Up</strong> next to a provider that isn't enrolled yet.</div>
+          <div class="say"><span class="label">Say</span>"Turning this on takes about the same five minutes we just spent connecting the bill in the first place."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <div class="do-line">Select a vendor account, click <strong>Next</strong>, then click <strong>Validate Address</strong> and wait a few seconds.</div>
+          <div class="say"><span class="label">Say</span>"We're checking your remittance details against what the provider has on file, live — so a payment never bounces over a stale address."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">4</span>
+        <div class="step-body">
+          <div class="do-line">Click a bank card to select it, click <strong>Next</strong>.</div>
+          <div class="say"><span class="label">Say</span>"Pick which account funds this vendor's payments. You can wire different vendors to different accounts."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">5</span>
+        <div class="step-body">
+          <div class="do-line">Toggle <strong>Approval Workflow</strong> on, pick a workflow, click <strong>Next</strong>.</div>
+          <div class="say"><span class="label">Say</span>"This is the control finance leaders ask for first: fully automatic, or routed through your team's approval before anything moves. You decide, per vendor."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">6</span>
+        <div class="step-body">
+          <div class="do-line">On Review and Enroll, optionally show <strong>Edit Enrollment</strong> or <strong>Add Memo</strong>, then click <strong>Enroll</strong> and confirm.</div>
+          <div class="say"><span class="label">Say</span>"Nothing here is locked in blind — review it, leave your team a note, and enroll."</div>
+        </div>
+      </li>
+    </ol>
+
+    <div class="payoff">
+      <span class="label">The payoff</span>
+      Back on Home, this provider's status has changed — it now needs one thing before its first
+      automated payment: a quick human approval. That's Act 3.
+    </div>
+  </section>
+
+  <!-- ============================= ACT 3 ============================= -->
+  <section class="act" id="act3" data-act="3">
+    <div class="act-head">
+      <span class="act-num">Act 3</span>
+      <h2>Approve with confidence, then get paid</h2>
+    </div>
+    <p class="act-why">The moment that matters most: this is where automation meets your team's
+      judgment, on purpose.</p>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <div class="do-line">Click the <strong>APPROVAL NEEDED</strong> pill on Home.</div>
+          <div class="say"><span class="label">Say</span>"This isn't a separate tool you have to go find — it's one click from the same place you were just standing."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <div class="do-line">Point out the <strong>Time Sensitive Payment</strong> banner and tab.</div>
+          <div class="say"><span class="label">Say</span>"AvidXchange already knows this needs eyes on it today — nobody has to remember to check."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <div class="do-line">Click <strong>View Invoice</strong> on an ordinary row.</div>
+          <div class="say"><span class="label">Say</span>"Most invoices sail through clean — nothing flagged, nothing to review."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">4</span>
+        <div class="step-body">
+          <div class="do-line">Go back, then click <strong>Approve Invoice</strong> on a flagged row — read the warning banner out loud.</div>
+          <div class="say"><span class="label">Say</span>"But when something looks off — a duplicate bill, a charge that's unusually high — we don't silently pay it, and we don't silently block it either. We surface it, right here, so your team makes the call in seconds instead of finding out after the money's already gone."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">5</span>
+        <div class="step-body">
+          <div class="do-line">Click <strong>Save</strong>, then <strong>Got it!</strong> on the confirmation.</div>
+          <div class="say"><span class="label">Say</span>"Approved, logged, and moving to payment — fully auditable."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">6</span>
+        <div class="step-body">
+          <div class="do-line">Click a <strong>View Payment</strong> link, landing in AvidPay.</div>
+          <div class="say"><span class="label">Say</span>"And once it's paid, here's everything about that payment in one place."</div>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">7</span>
+        <div class="step-body">
+          <div class="do-line">Click any batch row to open its detail panel.</div>
+          <div class="say"><span class="label">Say</span>"Dates, invoice breakdown, proof of payment, full history — everything you need for reconciliation or an audit, with nothing to go dig up."</div>
+        </div>
+      </li>
+    </ol>
+
+    <div class="payoff">
+      <span class="label">The close</span>
+      Ask: <em>"From an unconnected vendor to a retrieved, automated, reviewed, and paid bill —
+      how much of that is your team doing by hand today?"</em> Let the silence land before you
+      move to the ask below.
+    </div>
+  </section>
+
+  <div class="close">
+    <h2>Bring it home</h2>
+    <p>Everything you just watched — connect, automate, approve, pay — is one continuous system,
+      not four separate tools stitched together after the fact. Your team only shows up where
+      judgment actually matters: choosing a workflow, and reviewing the one invoice in twenty
+      that looks different.</p>
+    <p class="ask">"Which vendor is costing your team the most manual time today? Let's connect
+      that one first."</p>
+  </div>
+
+  <section class="objections" id="objections">
+    <h2>If you get a tough question</h2>
+    <p class="act-why">Answer what the demo actually shows. For anything below, it's fine to say
+      "let me bring in the right person for the specifics" rather than guess.</p>
+
+    <div class="objection">
+      <div class="q">"How secure is the stored login credential?"</div>
+      <div class="a">Speak to what you've confirmed with security/engineering, not what seems
+        plausible — don't improvise encryption or compliance specifics live.</div>
+    </div>
+    <div class="objection">
+      <div class="q">"What if the vendor changes their password?"</div>
+      <div class="a">Not covered in this prototype — flag it as a question for the product team
+        rather than inventing a re-auth flow on the spot.</div>
+    </div>
+    <div class="objection">
+      <div class="q">"Can more than one person approve a payment?"</div>
+      <div class="a">The demo shows a single approver's view. If multi-step approval chains come
+        up, confirm the real workflow options with product rather than assuming.</div>
+    </div>
+    <div class="objection">
+      <div class="q">"What does this cost / how is it priced?"</div>
+      <div class="a">Redirect to sales/account leadership — pricing isn't part of this
+        walkthrough.</div>
+    </div>
+  </section>
+
+  <section class="refs" id="refs">
+    <h2>Quick reference — jump to any screen</h2>
+    <p class="act-why">If a click misfires mid-demo, don't fumble — open the right row below in a
+      new tab and keep talking.</p>
+    <table class="reflist">
+      <thead><tr><th>Act</th><th>Screen</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Home (empty)</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Search for a bill provider</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-search-provider.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Select authentication</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-step-168.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Forward emails</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-forward-email.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Provider login</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-login-credentials.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Master vendor selection</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-master-vendor-102.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Enroll accounts</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-enroll-accounts.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act1)">Act 1</td><td>Confirmation</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/wizard-confirmation.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--navy)">Home</td><td>Connected Home (Priority Payments tab)</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/home-connected.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act2)">Act 2</td><td>Select vendor account</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/pp-select-vendor.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act2)">Act 2</td><td>Confirm address</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/pp-confirm-address.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act2)">Act 2</td><td>Select funding account</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/pp-select-funding.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act2)">Act 2</td><td>Payment rules</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/pp-payment-rules.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act2)">Act 2</td><td>Review and enroll</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/pp-review-enroll.html" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act3)">Act 3</td><td>Invoice home (Time Sensitive tab)</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/invoice-home.html#time-sensitive" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act3)">Act 3</td><td>Invoice detail — clean</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/invoice-detail.html?scenario=fine" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act3)">Act 3</td><td>Invoice detail — flagged (duplicate)</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/invoice-detail.html?scenario=no-stp&return=row1" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act3)">Act 3</td><td>Invoice detail — flagged (anomaly)</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/invoice-detail.html?scenario=anomaly&return=row3" target="_blank" rel="noopener">open</a></td></tr>
+        <tr><td class="act-tag" style="color:var(--act3)">Act 3</td><td>AvidPay batches</td><td><a href="https://ayamaguchi-avid.github.io/e2e-prototype/screens/pay-home.html" target="_blank" rel="noopener">open</a></td></tr>
+      </tbody>
+    </table>
+
+    <div class="reset-tip">
+      <strong>Resetting before a repeat run-through:</strong> approving an invoice in Act 3 is
+      remembered in that browser (not shared with anyone else watching). To reset it, open the
+      browser console on <code>invoice-home.html</code> and run
+      <code>localStorage.removeItem('tsRow1Approved'); localStorage.removeItem('tsRow3Approved')</code>,
+      or just demo from a fresh private/incognito window each time.
+    </div>
+  </section>
+
+  <footer>Connected Payments Demo Script · built from the live prototype at ayamaguchi-avid.github.io/e2e-prototype</footer>
+</div>
+</body>
+</html>
