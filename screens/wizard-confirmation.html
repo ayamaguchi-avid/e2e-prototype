@@ -64,21 +64,21 @@
               <tr>
                 <td>01956356</td>
                 <td>Summary</td>
-                <td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td>
+                <td>agrater@nextrealty.com<br /><span class="text-muted nickname-slot">(Account nickname)</span></td>
                 <td class="vendor-account-cell"><a href="#" class="linked-label" onclick="return false;">PSEG Newark</a></td>
                 <td class="link-cell"><button type="button" class="btn btn-secondary btn-sm" disabled>Unlink</button></td>
               </tr>
               <tr>
                 <td>82359673</td>
                 <td>Sub account</td>
-                <td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td>
+                <td>agrater@nextrealty.com<br /><span class="text-muted nickname-slot">(Account nickname)</span></td>
                 <td class="vendor-account-cell">&nbsp;</td>
                 <td class="link-cell"><button type="button" class="btn btn-primary btn-sm" disabled>Link</button></td>
               </tr>
               <tr>
                 <td>27598693</td>
                 <td>Sub account</td>
-                <td>agrater@nextrealty.com<br /><span class="text-muted">(Account nickname)</span></td>
+                <td>agrater@nextrealty.com<br /><span class="text-muted nickname-slot">(Account nickname)</span></td>
                 <td class="vendor-account-cell">&nbsp;</td>
                 <td class="link-cell"><button type="button" class="btn btn-primary btn-sm" disabled>Link</button></td>
               </tr>
@@ -114,6 +114,15 @@
 <script src="../js/chrome.js"></script>
 <script src="../js/app.js"></script>
 <script>
+  // The account nickname typed on wizard-login-credentials.html - show it
+  // in place of the "(Account nickname)" placeholder if one was set.
+  var savedNickname = localStorage.getItem('accountNickname');
+  if (savedNickname) {
+    document.querySelectorAll('.nickname-slot').forEach(function (el) {
+      el.textContent = '(' + savedNickname + ')';
+    });
+  }
+
   document.getElementById('confirmEnrollBtn').addEventListener('click', function () {
     window.location.href = '../screens/home-connected.html';
   });
