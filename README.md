@@ -185,6 +185,28 @@ existing screens got new content/behavior:
   down intentionally); per-row invoice numbers/dates are this prototype's own synthetic data since
   Figma only showed one example row's values.
 
+### Third round on 2026-09-29: correcting the invoice-approval confirmation
+
+The designer re-sent the full frame-by-frame spec, but a fresh Figma pull showed frames 1-17 had
+identical node IDs to the previous round (unchanged) — the real edit was a recreation of frames
+20.1/21/21.1/22/22.1, refining the invoice-approval branch. Two fixes, both in
+`invoice-detail.html`, `invoice-home.html`, and `pay-home.html` only:
+
+- **The "Got it!" confirmation was wrong.** Last round's "Invoice approved" modal was this
+  project's own invented copy, written on the assumption that Figma's real content (the
+  Auto-initiate-payments explainer) was a stray authoring artifact. A second look at the
+  recreated frames confirmed it's deliberate: approving a flagged invoice shows that exact same
+  Auto-initiate modal the page already uses elsewhere, pre-set to that invoice's own state
+  (the "duplicate bill" invoice defaults to auto-initiate **on**, "Got it!"; the "bill higher than
+  average" one defaults to **off**, "Turn on"). Fixed by reusing the existing modal instead of a
+  bespoke one.
+- **New branch after approving**: approve the *first* of the two flagged invoices and its "View
+  Payment" link jumps straight into that payment's detail panel, already open. Approve *both*,
+  and "View Payment" instead lands on the plain batches list first, needing one more click to
+  open a payment — matching the designer's explicit difference between frame 21.2 ("View Payment
+  goes to 24") and frame 22.2 ("View Payment goes to 23"). Implemented via a `pay-home.html?open=1`
+  query param that auto-selects the first row on load.
+
 ### Earlier rounds (still applicable)
 
 - **Text kept verbatim from Figma even where it looked like a typo or was inconsistently

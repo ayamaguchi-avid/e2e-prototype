@@ -140,7 +140,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v6M12 7.3v.1"/></svg>
           </button>
           <label class="toggle">
-            <input type="checkbox" id="autoToggle" checked />
+            <input type="checkbox" id="autoToggle" />
             <span class="track"></span>
           </label>
         </div>
@@ -232,25 +232,6 @@
   </div>
 </div>
 
-<!-- Approval confirmation (Figma frames "21.1"/"22.1") — shown after Save on
-     an invoice that was flagged (no-stp / anomaly scenarios) and reached
-     from the Invoice Home "Time Sensitive" tab's Approve Invoice action.
-     "Got it!" returns to invoice-home.html's Time Sensitive tab with that
-     row marked approved. -->
-<div class="modal-overlay" id="approvalConfirmOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Invoice approved</h3>
-    </div>
-    <div class="modal-body">
-      <p id="approvalConfirmBody">This invoice has been approved and will move to the payment queue.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" id="approvalConfirmGotIt">Got it!</button>
-    </div>
-  </div>
-</div>
-
 <script src="../js/chrome-invoice.js"></script>
 <script>
   (function () {
@@ -258,17 +239,20 @@
       fine: {
         type: 'success',
         title: 'Everything looks fine.',
-        body: 'No anomalies detected. Payment scheduled for 09/22/2026'
+        body: 'No anomalies detected. Payment scheduled for 09/22/2026',
+        autoOn: true
       },
       anomaly: {
         type: 'warning',
         title: 'Bill significantly higher than average',
-        body: 'This bill is 143% higher than the average amount for this account. Review the invoice before approving payment.'
+        body: 'This bill is 143% higher than the average amount for this account. Review the invoice before approving payment.',
+        autoOn: false
       },
       'no-stp': {
         type: 'warning',
         title: 'Duplicate/unexpected bill',
-        body: 'A similar invoice from this provider was recently received for the same billing period. Review before approving payment.'
+        body: 'A similar invoice from this provider was recently received for the same billing period. Review before approving payment.',
+        autoOn: true
       }
     };
 
@@ -288,6 +272,12 @@
 
     var boxClass = data.type === 'success' ? 'alert-success-box' : 'alert-warning';
     var icon = data.type === 'success' ? iconSuccess : iconWarning;
+
+    // Each scenario's own Auto-initiate default (Figma: the "no-stp" invoice
+    // has it on, the "anomaly" invoice has it off) - drives which variant of
+    // the Auto-initiate modal below shows when Save is clicked on a flagged
+    // invoice (frames 21.1 "is on" / 22.1 "is off").
+    document.getElementById('autoToggle').checked = !!data.autoOn;
 
     document.getElementById('scenarioBanner').innerHTML =
       '<div class="' + boxClass + '">' +
@@ -312,6 +302,14 @@
     var confirmBtn = document.getElementById('autoModalConfirm');
     var modalToggle = document.getElementById('autoModalToggle');
 
+    var approvalRowNum = returnTo ? APPROVAL_ROWS[returnTo] : null;
+    // True while the modal is open because of Save on a flagged invoice
+    // (frames 21.1/22.1), rather than the user just exploring the toggle -
+    // only then does confirming the modal also record the approval and
+    // navigate on, per "Frame 21.1/22.1: Got it button goes to frame
+    // 21.2/22.2".
+    var pendingApproval = false;
+
     function openModalFor(isOn) {
       title.textContent = 'Auto-initiate payments is ' + (isOn ? 'on' : 'off');
       offExtra.style.display = isOn ? 'none' : 'block';
@@ -321,41 +319,36 @@
       overlay.classList.add('open');
     }
 
-    function closeModal() { overlay.classList.remove('open'); }
+    function closeModal() { overlay.classList.remove('open'); pendingApproval = false; }
 
-    toggle.addEventListener('change', function () { openModalFor(toggle.checked); });
-    document.getElementById('autoInfoBtn').addEventListener('click', function () { openModalFor(toggle.checked); });
+    toggle.addEventListener('change', function () { pendingApproval = false; openModalFor(toggle.checked); });
+    document.getElementById('autoInfoBtn').addEventListener('click', function () { pendingApproval = false; openModalFor(toggle.checked); });
     document.getElementById('autoModalClose').addEventListener('click', closeModal);
     overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
     confirmBtn.addEventListener('click', function () {
       // "Turn on" flips the switch back on; "Got it!" just dismisses.
       if (confirmBtn.textContent === 'Turn on') { toggle.checked = true; }
+      if (pendingApproval && approvalRowNum) {
+        localStorage.setItem('tsRow' + approvalRowNum + 'Approved', '1');
+        window.location.href = 'invoice-home.html#time-sensitive';
+        return;
+      }
       closeModal();
     });
     modalToggle.addEventListener('change', function () { toggle.checked = modalToggle.checked; });
 
-    // Save (standing in for "Save" or navigating back) — where it goes
-    // depends on "return". A flagged invoice reached via Approve Invoice
-    // shows the "Got it!" confirmation first; the plain View Invoice flow
-    // just returns to the Time Sensitive tab directly.
-    var approvalOverlay = document.getElementById('approvalConfirmOverlay');
-    var approvalBody = document.getElementById('approvalConfirmBody');
-    var approvalGotIt = document.getElementById('approvalConfirmGotIt');
-    var approvalRowNum = returnTo ? APPROVAL_ROWS[returnTo] : null;
-
+    // Save — where it goes depends on "return". A flagged invoice reached
+    // via Approve Invoice shows this same Auto-initiate modal (matching the
+    // invoice's own toggle state) as its confirmation before advancing; the
+    // plain View Invoice flow just returns to the Time Sensitive tab.
     document.getElementById('saveBtn').addEventListener('click', function () {
       if (!returnTo) return; // no return target on this page load; no-op like the other stub buttons
       if (approvalRowNum) {
-        approvalBody.textContent = 'This invoice has been approved despite the "' + data.title + '" flag. It will move to the payment queue.';
-        approvalOverlay.classList.add('open');
+        pendingApproval = true;
+        openModalFor(toggle.checked);
       } else {
         window.location.href = 'invoice-home.html#time-sensitive';
       }
-    });
-
-    approvalGotIt.addEventListener('click', function () {
-      if (approvalRowNum) localStorage.setItem('tsRow' + approvalRowNum + 'Approved', '1');
-      window.location.href = 'invoice-home.html#time-sensitive';
     });
   })();
 </script>

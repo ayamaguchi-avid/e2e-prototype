@@ -493,17 +493,29 @@
     // confirmation after approving a time-sensitive invoice. Persisted in
     // localStorage (simplest reliable option for a static prototype - no
     // query string round-trip needed, survives the invoice-detail.html hop).
+    //
+    // Per the designer's frame-by-frame spec: after approving the FIRST
+    // invoice, "View Payment" jumps straight into the payment's detail panel
+    // (frame 21.2 -> 24 directly). Once BOTH invoices are approved, "View
+    // Payment" instead lands on the plain batches list first (frame 22.2 ->
+    // 23), requiring one more click to open a payment's detail - matching
+    // pay-home.html's own row-click-to-open-panel behavior.
+    var row1Approved = localStorage.getItem('tsRow1Approved') === '1';
+    var row3Approved = localStorage.getItem('tsRow3Approved') === '1';
+    var bothApproved = row1Approved && row3Approved;
+    var paymentLink = bothApproved ? 'pay-home.html' : 'pay-home.html?open=1';
+
     function markApproved(rowNum) {
       var actionCell = document.getElementById('ts-row' + rowNum + '-action');
       var stageCell = document.getElementById('ts-row' + rowNum + '-stage');
       var row = document.getElementById('ts-row-' + rowNum);
       if (stageCell) stageCell.innerHTML = '<span class="ts-tag ts-tag-neutral">Payment Queue</span>';
-      if (actionCell) actionCell.innerHTML = '<a href="pay-home.html">View Payment</a>';
+      if (actionCell) actionCell.innerHTML = '<a href="' + paymentLink + '">View Payment</a>';
       if (row) row.classList.remove('flag-row');
     }
 
-    if (localStorage.getItem('tsRow1Approved') === '1') markApproved(1);
-    if (localStorage.getItem('tsRow3Approved') === '1') markApproved(3);
+    if (row1Approved) markApproved(1);
+    if (row3Approved) markApproved(3);
 
     // Land on the Time Sensitive tab when linked to with #time-sensitive
     // (used by the "Go to pending approval" banner link on this page, and by

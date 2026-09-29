@@ -243,6 +243,16 @@
     body.classList.toggle('collapsed');
     title.classList.toggle('collapsed');
   }
+
+  // "?open=1" (linked from invoice-home.html after approving the FIRST of
+  // the two time-sensitive invoices) lands straight on the top batch's
+  // detail panel already open - Figma frame "24" directly, skipping the
+  // plain batches-list state ("23"). Approving both invoices instead links
+  // here without the param, landing on frame 23's plain list.
+  if (new URLSearchParams(location.search).get('open') === '1') {
+    var firstRow = document.getElementById('phTableBody').rows[0];
+    if (firstRow) selectBatch(firstRow);
+  }
 </script>
 </body>
 </html>
